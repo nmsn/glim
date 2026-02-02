@@ -15,8 +15,12 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "lucide-react": "^0.563.0",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",

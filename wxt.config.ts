@@ -1,15 +1,18 @@
 import { defineConfig } from 'wxt';
-
+import tailwindcss from "@tailwindcss/vite";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  vite: () => ({
+    plugins: [tailwindcss()],
+  }),
   manifest: {
-    // Put manual changes here
-    permissions: ["dns"],
+    permissions: ["dns", "webRequest"],
     host_permissions: [
       'https://dns.google/*',
       'https://cloudflare-dns.com/*',
-      'http://ip-api.com/*'
+      'http://ip-api.com/*',
+      '<all_urls>'
     ],
   },
   // 配置启动时打开的页面
