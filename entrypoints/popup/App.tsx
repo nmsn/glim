@@ -1,90 +1,51 @@
 import { useState } from 'react';
 import { browser } from 'wxt/browser';
-import { getIPAddress } from '@/utils/get-ip';
-import getServerLocation from '@/utils/server-location';
+import { getResponseHeaders } from '@/utils/headers';
+import { getPageInfo } from '@/utils/page-info';
 import './App.css';
 
-interface ServerLocation {
-  city: string;
-  country: string;
-  coords: {
-    lat: number;
-    lon: number;
-  };
-  isp: string;
-}
-
-interface IpLocationInfo {
-  ip: string;
-  location: ServerLocation | null;
-  loading: boolean;
-  error?: string;
+interface PageInfoResult {
+  url: string;
+  title: string;
+  html: string;
+  referrer: string;
+  contentType: string | null;
+  charset: string | null;
 }
 
 function App() {
   const [currentUrl, setCurrentUrl] = useState<string>('');
-  const [ipLocations, setIpLocations] = useState<IpLocationInfo[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [pageInfo, setPageInfo] = useState<PageInfoResult | null>(null);
+  const [headers, setHeaders] = useState<Record<string, string> | null>(null);
+  const [loading, setLoading] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const getCurrentTabUrlAndIP = async () => {
-    setLoading(true);
+  const getCurrentTabInfo = async () => {
+    setLoading('获取中...');
     setError('');
-    setIpLocations([]);
+    setPageInfo(null);
+    setHeaders(null);
 
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
       if (!tab?.url) {
         setCurrentUrl('无法获取当前页面地址');
-        setLoading(false);
+        setLoading('');
         return;
       }
 
       setCurrentUrl(tab.url);
 
-      const ips = await getIPAddress(tab.url);
+      const info = await getPageInfo();
+      setPageInfo(info);
 
-      if (ips.length > 0) {
-        const initialIpLocations: IpLocationInfo[] = ips.map(ip => ({
-          ip,
-          location: null,
-          loading: true,
-        }));
-        setIpLocations(initialIpLocations);
+      const responseHeaders = await getResponseHeaders(tab.url);
+      setHeaders(responseHeaders);
 
-        const locationPromises = ips.map(async (ip, index) => {
-          try {
-            const location = await getServerLocation(ip);
-            setIpLocations(prev => {
-              const updated = [...prev];
-              updated[index] = {
-                ...updated[index],
-                location,
-                loading: false,
-              };
-              return updated;
-            });
-          } catch (err: any) {
-            setIpLocations(prev => {
-              const updated = [...prev];
-              updated[index] = {
-                ...updated[index],
-                loading: false,
-                error: err.message || '获取位置信息失败',
-              };
-              return updated;
-            });
-          }
-        });
-
-        await Promise.all(locationPromises);
-      } else {
-        setError('无法获取该域名的 IP 地址');
-      }
     } catch (err: any) {
       setError('获取信息失败: ' + err.message);
     } finally {
-      setLoading(false);
+      setLoading('');
     }
   };
 
@@ -92,78 +53,76 @@ function App() {
     <>
       <h1>WXT + React</h1>
       <div className="card" style={{ marginTop: '20px' }}>
-        <button onClick={getCurrentTabUrlAndIP} disabled={loading}>
-          {loading ? '获取中...' : '获取当前页面地址和 IP'}
+        <button onClick={getCurrentTabInfo} disabled={!!loading}>
+          {loading || '获取当前页面信息'}
         </button>
 
         {currentUrl && (
           <div style={{ marginTop: '15px', textAlign: 'left' }}>
-            <p style={{ wordBreak: 'break-all' }}>
+            <p style={{ wordBreak: 'break-all', color: 'inherit' }}>
               <strong>当前地址:</strong> {currentUrl}
             </p>
           </div>
         )}
 
-        {ipLocations.length > 0 && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
-            <p><strong>IP 地址及服务器位置:</strong></p>
-            <div style={{ marginTop: '10px' }}>
-              {ipLocations.map((ipInfo, index) => (
-                <div
-                  key={index}
-                  style={{
-                    padding: '12px',
-                    marginBottom: '10px',
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: '6px',
-                    border: '1px solid #e0e0e0',
-                  }}
-                >
-                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold', marginBottom: '8px' }}>
-                    {ipInfo.ip}
-                  </div>
-
-                  {ipInfo.loading && (
-                    <div style={{ color: '#666', fontSize: '14px' }}>
-                      正在获取位置信息...
-                    </div>
-                  )}
-
-                  {ipInfo.error && (
-                    <div style={{ color: '#ff6b6b', fontSize: '14px' }}>
-                      错误: {ipInfo.error}
-                    </div>
-                  )}
-
-                  {ipInfo.location && (
-                    <div style={{ fontSize: '14px', color: '#333' }}>
-                      <div style={{ marginBottom: '4px' }}>
-                        <strong>📍 位置:</strong> {ipInfo.location.city}, {ipInfo.location.country}
-                      </div>
-                      <div style={{ marginBottom: '4px' }}>
-                        <strong>🌐 坐标:</strong> {ipInfo.location.coords.lat}, {ipInfo.location.coords.lon}
-                      </div>
-                      <div>
-                        <strong>🏢 ISP:</strong> {ipInfo.location.isp}
-                      </div>
-                    </div>
-                  )}
-
-                  {!ipInfo.loading && !ipInfo.error && !ipInfo.location && (
-                    <div style={{ color: '#ff6b6b', fontSize: '14px' }}>
-                      未能获取位置信息
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+        {loading && (
+          <p style={{ marginTop: '10px', color: 'inherit' }}>{loading}</p>
         )}
 
         {error && (
           <p style={{ marginTop: '10px', color: '#ff6b6b' }}>
             {error}
           </p>
+        )}
+
+        {pageInfo && (
+          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+            <p><strong>页面信息:</strong></p>
+            <div style={{
+              marginTop: '10px',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px solid oklch(0.85 0 0)',
+            }}>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>标题:</strong> {pageInfo.title}
+              </div>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>来源:</strong> {pageInfo.referrer || '(无)'}
+              </div>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>Content-Type:</strong> {pageInfo.contentType || '(无)'}
+              </div>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>字符编码:</strong> {pageInfo.charset || '(无)'}
+              </div>
+              <div style={{ color: 'inherit' }}>
+                <strong>HTML 长度:</strong> {pageInfo.html.length} 字符
+              </div>
+            </div>
+          </div>
+        )}
+
+        {headers && (
+          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+            <p><strong>响应 Headers:</strong></p>
+            <div style={{
+              marginTop: '10px',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px solid oklch(0.85 0 0)',
+              maxHeight: '200px',
+              overflow: 'auto',
+              fontFamily: 'monospace',
+              fontSize: '12px'
+            }}>
+              {Object.entries(headers).map(([key, value]) => (
+                <div key={key} style={{ marginBottom: '4px', color: 'inherit' }}>
+                  <strong>{key}:</strong> {value}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </>
