@@ -5,6 +5,9 @@ import { getPageInfo } from '@/utils/page-info';
 import { checkSecurityHeaders, type SecurityHeaders } from '@/utils/http-security';
 import { getSocialTagsFromContent } from '@/utils/social-tag-popup';
 import type { SocialTagResult } from '@/utils/social-tag';
+import { getIP } from '@/utils/get-ip';
+import { getServerLocation, type ServerLocation } from '@/utils/server-location';
+import MapChart from './MapChart';
 import './App.css';
 
 interface PageInfoResult {
@@ -16,12 +19,20 @@ interface PageInfoResult {
   charset: string | null;
 }
 
+interface IpLocationInfo {
+  ip: string;
+  location: ServerLocation | null;
+  loading: boolean;
+  error?: string;
+}
+
 function App() {
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [pageInfo, setPageInfo] = useState<PageInfoResult | null>(null);
   const [headers, setHeaders] = useState<Record<string, string> | null>(null);
   const [security, setSecurity] = useState<SecurityHeaders | null>(null);
   const [socialTags, setSocialTags] = useState<SocialTagResult | null>(null);
+  const [ipLocations, setIpLocations] = useState<IpLocationInfo[]>([]);
   const [loading, setLoading] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -32,6 +43,7 @@ function App() {
     setHeaders(null);
     setSecurity(null);
     setSocialTags(null);
+    setIpLocations([]);
 
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -42,6 +54,46 @@ function App() {
       }
 
       setCurrentUrl(tab.url);
+
+      // 获取 IP 地址
+      const ips = await getIP(tab.url);
+
+      if (ips.length > 0) {
+        const initialIpLocations: IpLocationInfo[] = ips.map(ip => ({
+          ip,
+          location: null,
+          loading: true,
+        }));
+        setIpLocations(initialIpLocations);
+
+        // 并行获取所有 IP 的位置信息
+        const locationPromises = ips.map(async (ip, index) => {
+          try {
+            const location = await getServerLocation(ip);
+            setIpLocations(prev => {
+              const updated = [...prev];
+              updated[index] = {
+                ...updated[index],
+                location,
+                loading: false,
+              };
+              return updated;
+            });
+          } catch (err: any) {
+            setIpLocations(prev => {
+              const updated = [...prev];
+              updated[index] = {
+                ...updated[index],
+                loading: false,
+                error: err.message || '获取位置信息失败',
+              };
+              return updated;
+            });
+          }
+        });
+
+        await Promise.all(locationPromises);
+      }
 
       const [info, responseHeaders, securityHeaders, tags] = await Promise.all([
         getPageInfo(),
@@ -93,6 +145,62 @@ function App() {
           <p style={{ marginTop: '10px', color: '#ff6b6b' }}>
             {error}
           </p>
+        )}
+
+        {ipLocations.length > 0 && (
+          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+            <p><strong>服务器位置:</strong></p>
+            <div style={{ marginTop: '10px' }}>
+              {ipLocations.map((ipInfo, index) => (
+                <div
+                  key={index}
+                  style={{
+                    padding: '12px',
+                    marginBottom: '10px',
+                    borderRadius: '6px',
+                    border: '1px solid oklch(0.85 0 0)',
+                  }}
+                >
+                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold', marginBottom: '8px', color: 'inherit' }}>
+                    {ipInfo.ip}
+                  </div>
+
+                  {ipInfo.loading && (
+                    <div style={{ color: 'inherit', fontSize: '14px' }}>
+                      正在获取位置信息...
+                    </div>
+                  )}
+
+                  {ipInfo.error && (
+                    <div style={{ color: '#ff6b6b', fontSize: '14px' }}>
+                      错误: {ipInfo.error}
+                    </div>
+                  )}
+
+                  {ipInfo.location && (
+                    <>
+                      <div style={{ fontSize: '14px', color: 'inherit', marginBottom: '8px' }}>
+                        <div style={{ marginBottom: '4px' }}>
+                          <strong>📍 位置:</strong> {ipInfo.location.city}, {ipInfo.location.country}
+                        </div>
+                        <div style={{ marginBottom: '4px' }}>
+                          <strong>🌐 坐标:</strong> {ipInfo.location.coords.lat}, {ipInfo.location.coords.lon}
+                        </div>
+                        <div>
+                          <strong>🏢 ISP:</strong> {ipInfo.location.isp}
+                        </div>
+                      </div>
+                      <MapChart
+                        lat={ipInfo.location.coords.lat}
+                        lon={ipInfo.location.coords.lon}
+                        label={ipInfo.location.city}
+                      />
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {pageInfo && (
