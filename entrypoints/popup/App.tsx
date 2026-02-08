@@ -3,6 +3,8 @@ import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo } from '@/utils/page-info';
 import { checkSecurityHeaders, type SecurityHeaders } from '@/utils/http-security';
+import { getSocialTagsFromContent } from '@/utils/social-tag-popup';
+import type { SocialTagResult } from '@/utils/social-tag';
 import './App.css';
 
 interface PageInfoResult {
@@ -19,6 +21,7 @@ function App() {
   const [pageInfo, setPageInfo] = useState<PageInfoResult | null>(null);
   const [headers, setHeaders] = useState<Record<string, string> | null>(null);
   const [security, setSecurity] = useState<SecurityHeaders | null>(null);
+  const [socialTags, setSocialTags] = useState<SocialTagResult | null>(null);
   const [loading, setLoading] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -28,6 +31,7 @@ function App() {
     setPageInfo(null);
     setHeaders(null);
     setSecurity(null);
+    setSocialTags(null);
 
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -39,14 +43,17 @@ function App() {
 
       setCurrentUrl(tab.url);
 
-      const info = await getPageInfo();
+      const [info, responseHeaders, securityHeaders, tags] = await Promise.all([
+        getPageInfo(),
+        getResponseHeaders(tab.url),
+        checkSecurityHeaders(tab.url),
+        getSocialTagsFromContent().catch(() => null)
+      ]);
+
       setPageInfo(info);
-
-      const responseHeaders = await getResponseHeaders(tab.url);
       setHeaders(responseHeaders);
-
-      const securityHeaders = await checkSecurityHeaders(tab.url);
       setSecurity(securityHeaders);
+      setSocialTags(tags);
 
     } catch (err: any) {
       setError('获取信息失败: ' + err.message);
@@ -54,6 +61,14 @@ function App() {
       setLoading('');
     }
   };
+
+  const hasSocialData = socialTags && (
+    socialTags.title ||
+    socialTags.description ||
+    socialTags.ogTitle ||
+    socialTags.ogImage ||
+    socialTags.twitterCard
+  );
 
   return (
     <>
@@ -104,6 +119,91 @@ function App() {
               <div style={{ color: 'inherit' }}>
                 <strong>HTML 长度:</strong> {pageInfo.html.length} 字符
               </div>
+            </div>
+          </div>
+        )}
+
+        {hasSocialData && (
+          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+            <p><strong>Social Meta Tags:</strong></p>
+            <div style={{
+              marginTop: '10px',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px solid oklch(0.85 0 0)',
+            }}>
+              {socialTags?.title && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>标题:</strong> {socialTags.title}
+                </div>
+              )}
+              {socialTags?.description && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>描述:</strong> {socialTags.description}
+                </div>
+              )}
+              {socialTags?.ogTitle && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>OG 标题:</strong> {socialTags.ogTitle}
+                </div>
+              )}
+              {socialTags?.ogDescription && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>OG 描述:</strong> {socialTags.ogDescription}
+                </div>
+              )}
+              {socialTags?.ogImage && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>OG 图片:</strong>
+                  <img
+                    src={socialTags.ogImage}
+                    alt="OG Image"
+                    style={{ maxWidth: '100%', maxHeight: '100px', marginTop: '4px', display: 'block' }}
+                  />
+                </div>
+              )}
+              {socialTags?.twitterCard && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>Twitter Card:</strong> {socialTags.twitterCard}
+                </div>
+              )}
+              {socialTags?.twitterTitle && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>Twitter 标题:</strong> {socialTags.twitterTitle}
+                </div>
+              )}
+              {socialTags?.twitterImage && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>Twitter 图片:</strong>
+                  <img
+                    src={socialTags.twitterImage}
+                    alt="Twitter Image"
+                    style={{ maxWidth: '100%', maxHeight: '100px', marginTop: '4px', display: 'block' }}
+                  />
+                </div>
+              )}
+              {socialTags?.canonicalUrl && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>Canonical URL:</strong> {socialTags.canonicalUrl}
+                </div>
+              )}
+              {socialTags?.themeColor && (
+                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                  <strong>主题色:</strong>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: socialTags.themeColor,
+                      marginLeft: '8px',
+                      border: '1px solid oklch(0.85 0 0)',
+                      verticalAlign: 'middle'
+                    }}
+                  />
+                  {' '}{socialTags.themeColor}
+                </div>
+              )}
             </div>
           </div>
         )}
