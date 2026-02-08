@@ -32,7 +32,7 @@ export default defineBackground(() => {
         });
         const normalizedUrl = normalizeUrl(details.url);
         tabHeaders.set(normalizedUrl, headers);
-        console.log('[Background] 缓存 headers:', normalizedUrl);
+        console.log('[Background] 缓存 headers:', normalizedUrl, headers);
         return undefined;
       }
     },

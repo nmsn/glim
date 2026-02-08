@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo } from '@/utils/page-info';
+import { checkSecurityHeaders, type SecurityHeaders } from '@/utils/http-security';
 import './App.css';
 
 interface PageInfoResult {
@@ -17,6 +18,7 @@ function App() {
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [pageInfo, setPageInfo] = useState<PageInfoResult | null>(null);
   const [headers, setHeaders] = useState<Record<string, string> | null>(null);
+  const [security, setSecurity] = useState<SecurityHeaders | null>(null);
   const [loading, setLoading] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -25,6 +27,7 @@ function App() {
     setError('');
     setPageInfo(null);
     setHeaders(null);
+    setSecurity(null);
 
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -42,6 +45,9 @@ function App() {
       const responseHeaders = await getResponseHeaders(tab.url);
       setHeaders(responseHeaders);
 
+      const securityHeaders = await checkSecurityHeaders(tab.url);
+      setSecurity(securityHeaders);
+
     } catch (err: any) {
       setError('获取信息失败: ' + err.message);
     } finally {
@@ -51,7 +57,6 @@ function App() {
 
   return (
     <>
-      <h1>WXT + React</h1>
       <div className="card" style={{ marginTop: '20px' }}>
         <button onClick={getCurrentTabInfo} disabled={!!loading}>
           {loading || '获取当前页面信息'}
@@ -98,6 +103,39 @@ function App() {
               </div>
               <div style={{ color: 'inherit' }}>
                 <strong>HTML 长度:</strong> {pageInfo.html.length} 字符
+              </div>
+            </div>
+          </div>
+        )}
+
+        {security && (
+          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+            <p><strong>安全 Headers:</strong></p>
+            <div style={{
+              marginTop: '10px',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px solid oklch(0.85 0 0)',
+            }}>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>HSTS (Strict-Transport-Security):</strong>{' '}
+                {security.strictTransportPolicy ? '✅ 已启用' : '❌ 未启用'}
+              </div>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>X-Frame-Options:</strong>{' '}
+                {security.xFrameOptions ? '✅ 已启用' : '❌ 未启用'}
+              </div>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>X-Content-Type-Options:</strong>{' '}
+                {security.xContentTypeOptions ? '✅ 已启用' : '❌ 未启用'}
+              </div>
+              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <strong>X-XSS-Protection:</strong>{' '}
+                {security.xXSSProtection ? '✅ 已启用' : '❌ 未启用'}
+              </div>
+              <div style={{ color: 'inherit' }}>
+                <strong>CSP (Content-Security-Policy):</strong>{' '}
+                {security.contentSecurityPolicy ? '✅ 已启用' : '❌ 未启用'}
               </div>
             </div>
           </div>
