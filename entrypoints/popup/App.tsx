@@ -57,7 +57,6 @@ function App() {
 
       setCurrentUrl(tab.url);
 
-      // 获取 IP 地址
       const ips = await getIP(tab.url);
 
       if (ips.length > 0) {
@@ -68,7 +67,6 @@ function App() {
         }));
         setIpLocations(initialIpLocations);
 
-        // 并行获取所有 IP 的位置信息
         const locationPromises = ips.map(async (ip, index) => {
           try {
             const location = await getServerLocation(ip);
@@ -126,60 +124,48 @@ function App() {
 
   return (
     <>
-      <div className="card" style={{ marginTop: '20px' }}>
-        <button onClick={getCurrentTabInfo} disabled={!!loading}>
+      <div className="card mt-5">
+        <button
+          onClick={getCurrentTabInfo}
+          disabled={!!loading}
+          className="px-4 py-2 rounded cursor-pointer transition-colors disabled:cursor-not-allowed"
+        >
           {loading || '获取当前页面信息'}
         </button>
 
         {currentUrl && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
-            <p style={{ wordBreak: 'break-all', color: 'inherit' }}>
+          <div className="mt-[15px] text-left">
+            <p className="break-all">
               <strong>当前地址:</strong> {currentUrl}
             </p>
           </div>
         )}
 
         {loading && (
-          <p style={{ marginTop: '10px', color: 'inherit' }}>{loading}</p>
+          <p className="mt-[10px]">{loading}</p>
         )}
 
         {error && (
-          <p style={{ marginTop: '10px', color: '#ff6b6b' }}>
+          <p className="mt-[10px] text-red-500">
             {error}
           </p>
         )}
 
         {ipLocations.length > 0 && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+          <div className="mt-[15px] text-left">
             <p><strong>服务器位置:</strong></p>
 
             {ipLocations.length > 1 && (
-              <div style={{
-                display: 'flex',
-                gap: '8px',
-                marginTop: '10px',
-                marginBottom: '10px',
-                flexWrap: 'wrap'
-              }}>
+              <div className="flex gap-2 mt-2.5 mb-2.5 flex-wrap">
                 {ipLocations.map((ipInfo, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedIpIndex(index)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      border: selectedIpIndex === index
-                        ? '1px solid oklch(0.7 0.15 140)'
-                        : '1px solid oklch(0.85 0 0)',
-                      backgroundColor: selectedIpIndex === index
-                        ? 'oklch(0.25 0.1 140 / 0.3)'
-                        : 'transparent',
-                      color: 'inherit',
-                      cursor: 'pointer',
-                      fontFamily: 'monospace',
-                      fontSize: '13px',
-                      transition: 'all 0.2s ease',
-                    }}
+                    className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all font-mono
+                      ${selectedIpIndex === index
+                        ? 'border border-teal-500 bg-teal-500/30'
+                        : 'border border-gray-200 bg-transparent'
+                      }`}
                   >
                     {ipInfo.ip}
                   </button>
@@ -192,36 +178,30 @@ function App() {
               if (!selectedIp) return null;
 
               return (
-                <div
-                  style={{
-                    padding: '16px',
-                    borderRadius: '6px',
-                    border: '1px solid oklch(0.85 0 0)',
-                  }}
-                >
-                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold', marginBottom: '12px', color: 'inherit', fontSize: '14px' }}>
+                <div className="p-4 rounded-lg border border-gray-200">
+                  <div className="font-mono font-bold mb-3 text-sm">
                     {selectedIp.ip}
                   </div>
 
                   {selectedIp.loading && (
-                    <div style={{ color: 'inherit', fontSize: '14px' }}>
+                    <div className="text-sm">
                       正在获取位置信息...
                     </div>
                   )}
 
                   {selectedIp.error && (
-                    <div style={{ color: '#ff6b6b', fontSize: '14px' }}>
+                    <div className="text-red-500 text-sm">
                       错误: {selectedIp.error}
                     </div>
                   )}
 
                   {selectedIp.location && (
                     <>
-                      <div style={{ fontSize: '14px', color: 'inherit', marginBottom: '12px' }}>
-                        <div style={{ marginBottom: '6px' }}>
+                      <div className="text-sm mb-3">
+                        <div className="mb-1.5">
                           <strong>📍 位置:</strong> {selectedIp.location.city}, {selectedIp.location.country}
                         </div>
-                        <div style={{ marginBottom: '6px' }}>
+                        <div className="mb-1.5">
                           <strong>🌐 坐标:</strong> {selectedIp.location.coords.lat}, {selectedIp.location.coords.lon}
                         </div>
                         <div>
@@ -242,27 +222,22 @@ function App() {
         )}
 
         {pageInfo && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+          <div className="mt-[15px] text-left">
             <p><strong>页面信息:</strong></p>
-            <div style={{
-              marginTop: '10px',
-              padding: '12px',
-              borderRadius: '6px',
-              border: '1px solid oklch(0.85 0 0)',
-            }}>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+            <div className="mt-2.5 p-3 rounded-lg border border-gray-200">
+              <div className="mb-2">
                 <strong>标题:</strong> {pageInfo.title}
               </div>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+              <div className="mb-2">
                 <strong>来源:</strong> {pageInfo.referrer || '(无)'}
               </div>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+              <div className="mb-2">
                 <strong>Content-Type:</strong> {pageInfo.contentType || '(无)'}
               </div>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+              <div className="mb-2">
                 <strong>字符编码:</strong> {pageInfo.charset || '(无)'}
               </div>
-              <div style={{ color: 'inherit' }}>
+              <div>
                 <strong>HTML 长度:</strong> {pageInfo.html.length} 字符
               </div>
             </div>
@@ -270,82 +245,70 @@ function App() {
         )}
 
         {hasSocialData && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+          <div className="mt-[15px] text-left">
             <p><strong>Social Meta Tags:</strong></p>
-            <div style={{
-              marginTop: '10px',
-              padding: '12px',
-              borderRadius: '6px',
-              border: '1px solid oklch(0.85 0 0)',
-            }}>
+            <div className="mt-2.5 p-3 rounded-lg border border-gray-200">
               {socialTags?.title && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>标题:</strong> {socialTags.title}
                 </div>
               )}
               {socialTags?.description && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>描述:</strong> {socialTags.description}
                 </div>
               )}
               {socialTags?.ogTitle && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>OG 标题:</strong> {socialTags.ogTitle}
                 </div>
               )}
               {socialTags?.ogDescription && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>OG 描述:</strong> {socialTags.ogDescription}
                 </div>
               )}
               {socialTags?.ogImage && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>OG 图片:</strong>
                   <img
                     src={socialTags.ogImage}
                     alt="OG Image"
-                    style={{ maxWidth: '100%', maxHeight: '100px', marginTop: '4px', display: 'block' }}
+                    className="max-w-full max-h-[100px] mt-1 block"
                   />
                 </div>
               )}
               {socialTags?.twitterCard && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>Twitter Card:</strong> {socialTags.twitterCard}
                 </div>
               )}
               {socialTags?.twitterTitle && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>Twitter 标题:</strong> {socialTags.twitterTitle}
                 </div>
               )}
               {socialTags?.twitterImage && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>Twitter 图片:</strong>
                   <img
                     src={socialTags.twitterImage}
                     alt="Twitter Image"
-                    style={{ maxWidth: '100%', maxHeight: '100px', marginTop: '4px', display: 'block' }}
+                    className="max-w-full max-h-[100px] mt-1 block"
                   />
                 </div>
               )}
               {socialTags?.canonicalUrl && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>Canonical URL:</strong> {socialTags.canonicalUrl}
                 </div>
               )}
               {socialTags?.themeColor && (
-                <div style={{ marginBottom: '8px', color: 'inherit' }}>
+                <div className="mb-2">
                   <strong>主题色:</strong>
                   <span
-                    style={{
-                      display: 'inline-block',
-                      width: '16px',
-                      height: '16px',
-                      backgroundColor: socialTags.themeColor,
-                      marginLeft: '8px',
-                      border: '1px solid oklch(0.85 0 0)',
-                      verticalAlign: 'middle'
-                    }}
+                    className="inline-block w-4 h-4 ml-2 border border-gray-200 align-middle"
+                    style={{ backgroundColor: socialTags.themeColor }}
                   />
                   {' '}{socialTags.themeColor}
                 </div>
@@ -355,31 +318,26 @@ function App() {
         )}
 
         {security && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+          <div className="mt-[15px] text-left">
             <p><strong>安全 Headers:</strong></p>
-            <div style={{
-              marginTop: '10px',
-              padding: '12px',
-              borderRadius: '6px',
-              border: '1px solid oklch(0.85 0 0)',
-            }}>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+            <div className="mt-2.5 p-3 rounded-lg border border-gray-200">
+              <div className="mb-2">
                 <strong>HSTS (Strict-Transport-Security):</strong>{' '}
                 {security.strictTransportPolicy ? '✅ 已启用' : '❌ 未启用'}
               </div>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+              <div className="mb-2">
                 <strong>X-Frame-Options:</strong>{' '}
                 {security.xFrameOptions ? '✅ 已启用' : '❌ 未启用'}
               </div>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+              <div className="mb-2">
                 <strong>X-Content-Type-Options:</strong>{' '}
                 {security.xContentTypeOptions ? '✅ 已启用' : '❌ 未启用'}
               </div>
-              <div style={{ marginBottom: '8px', color: 'inherit' }}>
+              <div className="mb-2">
                 <strong>X-XSS-Protection:</strong>{' '}
                 {security.xXSSProtection ? '✅ 已启用' : '❌ 未启用'}
               </div>
-              <div style={{ color: 'inherit' }}>
+              <div>
                 <strong>CSP (Content-Security-Policy):</strong>{' '}
                 {security.contentSecurityPolicy ? '✅ 已启用' : '❌ 未启用'}
               </div>
@@ -388,20 +346,11 @@ function App() {
         )}
 
         {headers && (
-          <div style={{ marginTop: '15px', textAlign: 'left' }}>
+          <div className="mt-[15px] text-left">
             <p><strong>响应 Headers:</strong></p>
-            <div style={{
-              marginTop: '10px',
-              padding: '12px',
-              borderRadius: '6px',
-              border: '1px solid oklch(0.85 0 0)',
-              maxHeight: '200px',
-              overflow: 'auto',
-              fontFamily: 'monospace',
-              fontSize: '12px'
-            }}>
+            <div className="mt-2.5 p-3 rounded-lg border border-gray-200 max-h-[200px] overflow-auto font-mono text-xs">
               {Object.entries(headers).map(([key, value]) => (
-                <div key={key} style={{ marginBottom: '4px', color: 'inherit' }}>
+                <div key={key} className="mb-1">
                   <strong>{key}:</strong> {value}
                 </div>
               ))}
