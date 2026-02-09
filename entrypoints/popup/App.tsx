@@ -33,6 +33,7 @@ function App() {
   const [security, setSecurity] = useState<SecurityHeaders | null>(null);
   const [socialTags, setSocialTags] = useState<SocialTagResult | null>(null);
   const [ipLocations, setIpLocations] = useState<IpLocationInfo[]>([]);
+  const [selectedIpIndex, setSelectedIpIndex] = useState<number>(0);
   const [loading, setLoading] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -44,6 +45,7 @@ function App() {
     setSecurity(null);
     setSocialTags(null);
     setIpLocations([]);
+    setSelectedIpIndex(0);
 
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -150,56 +152,92 @@ function App() {
         {ipLocations.length > 0 && (
           <div style={{ marginTop: '15px', textAlign: 'left' }}>
             <p><strong>服务器位置:</strong></p>
-            <div style={{ marginTop: '10px' }}>
-              {ipLocations.map((ipInfo, index) => (
+
+            {ipLocations.length > 1 && (
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                marginTop: '10px',
+                marginBottom: '10px',
+                flexWrap: 'wrap'
+              }}>
+                {ipLocations.map((ipInfo, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedIpIndex(index)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: selectedIpIndex === index
+                        ? '1px solid oklch(0.7 0.15 140)'
+                        : '1px solid oklch(0.85 0 0)',
+                      backgroundColor: selectedIpIndex === index
+                        ? 'oklch(0.25 0.1 140 / 0.3)'
+                        : 'transparent',
+                      color: 'inherit',
+                      cursor: 'pointer',
+                      fontFamily: 'monospace',
+                      fontSize: '13px',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {ipInfo.ip}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {(() => {
+              const selectedIp = ipLocations[selectedIpIndex];
+              if (!selectedIp) return null;
+
+              return (
                 <div
-                  key={index}
                   style={{
-                    padding: '12px',
-                    marginBottom: '10px',
+                    padding: '16px',
                     borderRadius: '6px',
                     border: '1px solid oklch(0.85 0 0)',
                   }}
                 >
-                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold', marginBottom: '8px', color: 'inherit' }}>
-                    {ipInfo.ip}
+                  <div style={{ fontFamily: 'monospace', fontWeight: 'bold', marginBottom: '12px', color: 'inherit', fontSize: '14px' }}>
+                    {selectedIp.ip}
                   </div>
 
-                  {ipInfo.loading && (
+                  {selectedIp.loading && (
                     <div style={{ color: 'inherit', fontSize: '14px' }}>
                       正在获取位置信息...
                     </div>
                   )}
 
-                  {ipInfo.error && (
+                  {selectedIp.error && (
                     <div style={{ color: '#ff6b6b', fontSize: '14px' }}>
-                      错误: {ipInfo.error}
+                      错误: {selectedIp.error}
                     </div>
                   )}
 
-                  {ipInfo.location && (
+                  {selectedIp.location && (
                     <>
-                      <div style={{ fontSize: '14px', color: 'inherit', marginBottom: '8px' }}>
-                        <div style={{ marginBottom: '4px' }}>
-                          <strong>📍 位置:</strong> {ipInfo.location.city}, {ipInfo.location.country}
+                      <div style={{ fontSize: '14px', color: 'inherit', marginBottom: '12px' }}>
+                        <div style={{ marginBottom: '6px' }}>
+                          <strong>📍 位置:</strong> {selectedIp.location.city}, {selectedIp.location.country}
                         </div>
-                        <div style={{ marginBottom: '4px' }}>
-                          <strong>🌐 坐标:</strong> {ipInfo.location.coords.lat}, {ipInfo.location.coords.lon}
+                        <div style={{ marginBottom: '6px' }}>
+                          <strong>🌐 坐标:</strong> {selectedIp.location.coords.lat}, {selectedIp.location.coords.lon}
                         </div>
                         <div>
-                          <strong>🏢 ISP:</strong> {ipInfo.location.isp}
+                          <strong>🏢 ISP:</strong> {selectedIp.location.isp}
                         </div>
                       </div>
                       <MapChart
-                        lat={ipInfo.location.coords.lat}
-                        lon={ipInfo.location.coords.lon}
-                        label={ipInfo.location.city}
+                        lat={selectedIp.location.coords.lat}
+                        lon={selectedIp.location.coords.lon}
+                        label={selectedIp.location.city}
                       />
                     </>
                   )}
                 </div>
-              ))}
-            </div>
+              );
+            })()}
           </div>
         )}
 
