@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
@@ -32,6 +32,7 @@ function App() {
   const [selectedIpIndex, setSelectedIpIndex] = useState<number>(0);
   const [loading, setLoading] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [hasFetched, setHasFetched] = useState<boolean>(false);
 
   const getCurrentTabInfo = async () => {
     setLoading('获取中...');
@@ -102,6 +103,7 @@ function App() {
       setHeaders(responseHeaders);
       setSecurity(securityHeaders);
       setSocialTags(tags);
+      setHasFetched(true);
 
     } catch (err: any) {
       setError('获取信息失败: ' + err.message);
@@ -109,6 +111,11 @@ function App() {
       setLoading('');
     }
   };
+
+  // 组件挂载时自动执行获取
+  useEffect(() => {
+    getCurrentTabInfo();
+  }, []);
 
   const hasSocialData = socialTags && (
     socialTags.title ||
@@ -118,6 +125,12 @@ function App() {
     socialTags.twitterCard
   );
 
+  // 按钮文案：首次获取中显示"获取中..."，已获取过显示"再次获取"
+  const getButtonText = () => {
+    if (loading) return loading;
+    return hasFetched ? '🔄 再次获取' : '获取当前页面信息';
+  };
+
   return (
     <>
       <div className="card mt-5">
@@ -126,7 +139,7 @@ function App() {
           disabled={!!loading}
           className="px-4 py-2 rounded cursor-pointer transition-colors disabled:cursor-not-allowed"
         >
-          {loading || '获取当前页面信息'}
+          {getButtonText()}
         </button>
 
         {currentUrl && (
