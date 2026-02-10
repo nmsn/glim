@@ -135,16 +135,11 @@ function App() {
       <header className="border-b border-yellow pb-[8px] mb-[10px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex gap-[4px]">
-              <div className="w-[6px] h-[6px] bg-green animate-pulse" />
-              <div className="w-[6px] h-[6px] bg-yellow animate-pulse" style={{ animationDelay: '0.5s' }} />
-              <div className="w-[6px] h-[6px] bg-gray-medium animate-pulse" style={{ animationDelay: '1s' }} />
-            </div>
-            <h1 className="font-['var(--font-display)'] text-[12px] font-semibold text-yellow uppercase tracking-[1px]">
+            <div className="status-indicator" />
+            <h1 className="font-[family-name:var(--font-display)] text-[12px] font-semibold text-yellow uppercase tracking-[1px]">
               GLIM
             </h1>
           </div>
-          <span className="text-[8px] text-gray-medium font-['var(--font-mono)']">v1.0.0</span>
         </div>
 
         {currentUrl && (

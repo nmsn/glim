@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 @theme {
   --font-display: 'Orbitron', sans-serif;
@@ -43,8 +42,8 @@
 }
 
 * {
-  margin: 0;
-  padding: 0;
+  /* margin: 0;
+  padding: 0; */
   box-sizing: border-box;
 }
 
@@ -102,3 +101,11 @@ html, body {
   pointer-events: none;
   z-index: 1000;
 }
+
+        .status-indicator {
+            width: 6px;
+            height: 6px;
+            background: var(--color-green);
+            box-shadow: 0 0 6px var(--green), 0 0 12px var(--green-dim);
+            animation: pulse 2s ease-in-out infinite;
+        }

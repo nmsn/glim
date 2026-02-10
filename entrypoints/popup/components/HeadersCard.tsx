@@ -9,11 +9,8 @@ export function HeadersCard({ headers }: Props) {
 
   return (
     <div className="mt-[10px]">
-      <div className="flex items-center justify-between mb-2 pb-1 border-b border-gray-dark">
-        <SectionHeader title="响应 Headers" icon="◆" />
-        <span className="text-[8px] text-gray-medium">
-          {headerCount} 项
-        </span>
+      <div className="mb-2 pb-1 border-b border-gray-dark">
+        <SectionHeader title="响应 Headers" />
       </div>
 
       <div className="border [border-color:var(--border-color)] max-h-[200px] overflow-auto">

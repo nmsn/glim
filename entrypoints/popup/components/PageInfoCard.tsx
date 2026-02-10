@@ -9,7 +9,6 @@ export function PageInfoCard({ pageInfo }: Props) {
   return (
     <KeyValueCard
       title="基础信息"
-      icon="◆"
       variant="grid"
       data={[
         { label: '标题', value: pageInfo.title || '(无标题)' },
