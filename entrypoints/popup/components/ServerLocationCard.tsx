@@ -1,5 +1,5 @@
-
-import { KeyValueCard } from './KeyValueCard';
+import { SectionHeader } from './SectionHeader';
+import { KeyValueRow } from './KeyValueRow';
 import MapChart from './MapChart';
 import type { ServerLocation } from '@/utils/server-location';
 
@@ -24,23 +24,23 @@ export function ServerLocationCard({
   const selectedIp = ipLocations[selectedIpIndex];
 
   return (
-    <div className="mt-4">
-      <p className="text-left font-semibold mb-3 flex items-center gap-2">
-        <span>🌍</span>
-        服务器位置
-      </p>
+    <div className="mt-[10px]">
+      <SectionHeader title="服务器位置" />
 
       {ipLocations.length > 1 && (
-        <div className="flex gap-2 mb-3 flex-wrap">
+        <div className="flex gap-[6px] mb-[8px] flex-wrap">
           {ipLocations.map((ipInfo, index) => (
             <button
               key={index}
               onClick={() => onSelectIp(index)}
-              className={`px-3 py-1.5 rounded text-sm cursor-pointer transition-all font-mono
+              className={`
+                px-[8px] py-[4px] text-[9px] cursor-pointer transition-all font-[var(--font-mono)]
+                border border-[var(--border-color)]
                 ${selectedIpIndex === index
-                  ? 'border border-teal-500 bg-teal-500/30'
-                  : 'border border-gray-200 bg-transparent'
-                }`}
+                  ? 'bg-[var(--yellow)] text-[var(--bg-primary)] border-[var(--yellow)]'
+                  : 'bg-transparent text-[var(--gray-light)] hover:border-[var(--green)] hover:text-[var(--green)]'
+                }
+              `}
             >
               {ipInfo.ip}
             </button>
@@ -49,42 +49,50 @@ export function ServerLocationCard({
       )}
 
       {selectedIp && (
-        <div className="p-4 rounded-lg border border-gray-200">
-          <div className="font-mono font-bold mb-3 text-sm">
-            {selectedIp.ip}
-          </div>
-
+        <div className="border border-[var(--border-color)] bg-[var(--bg-secondary)]">
           {selectedIp.loading && (
-            <div className="text-sm text-gray-500">
+            <div className="p-[8px] text-[10px] text-[var(--gray-medium)]">
               正在获取位置信息...
             </div>
           )}
 
           {selectedIp.error && (
-            <div className="text-red-500 text-sm">
+            <div className="p-[8px] text-[10px] text-[var(--yellow)]">
               错误: {selectedIp.error}
             </div>
           )}
 
           {selectedIp.location && (
-            <>
-              <KeyValueCard
-                title=""
-                icon=""
-                data={[
-                  { label: '位置', value: `${selectedIp.location.city}, ${selectedIp.location.country}`, icon: '📍' },
-                  { label: '坐标', value: `${selectedIp.location.coords.lat}, ${selectedIp.location.coords.lon}`, icon: '🌐' },
-                  { label: 'ISP', value: selectedIp.location.isp, icon: '🏢' },
-                ]}
-              />
-              <div className="mt-3 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+            <div className="grid grid-cols-[100px_1fr] gap-[1px] bg-[var(--border-color)]">
+              {/* 左侧位置信息 */}
+              <div className="bg-[var(--bg-primary)]">
+                <KeyValueRow
+                  label="位置"
+                  value={`${selectedIp.location.city}, ${selectedIp.location.country}`}
+                />
+                <KeyValueRow
+                  label="坐标"
+                  value={`${selectedIp.location.coords.lat.toFixed(4)}, ${selectedIp.location.coords.lon.toFixed(4)}`}
+                />
+                <KeyValueRow
+                  label="ISP"
+                  value={selectedIp.location.isp}
+                />
+                <KeyValueRow
+                  label="IP"
+                  value={selectedIp.ip}
+                />
+              </div>
+
+              {/* 右侧地图 */}
+              <div className="bg-[var(--bg-primary)] min-h-[100px]">
                 <MapChart
                   lat={selectedIp.location.coords.lat}
                   lon={selectedIp.location.coords.lon}
                   label={selectedIp.location.city}
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
       )}

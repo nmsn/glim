@@ -1,9 +1,11 @@
 import { KeyValueRow } from './KeyValueRow';
+import { SectionHeader } from './SectionHeader';
 
 interface DataItem {
   label: string;
   value: React.ReactNode;
   icon?: React.ReactNode;
+  highlight?: boolean;
 }
 
 interface Props {
@@ -11,29 +13,43 @@ interface Props {
   icon?: React.ReactNode;
   children?: React.ReactNode;
   data?: DataItem[];
+  variant?: 'default' | 'grid';
 }
 
-export function KeyValueCard({ title, icon, children, data }: Props) {
+export function KeyValueCard({ title, icon, children, data, variant = 'default' }: Props) {
   return (
-    <div className="mt-4">
-      <p className="text-left font-semibold mb-3 flex items-center gap-2">
-        {icon && <span>{icon}</span>}
-        {title}
-      </p>
-      <div className="flex flex-col gap-2">
-        {data ? (
-          data.map((item, index) => (
+    <div className="mt-[10px]">
+      <SectionHeader title={title} icon={icon} />
+
+      {variant === 'grid' && data ? (
+        <div className="grid grid-cols-2 gap-[1px] bg-[var(--border-color)] border border-[var(--border-color)]">
+          {data.map((item, index) => (
             <KeyValueRow
               key={index}
               label={item.label}
               value={item.value}
               icon={item.icon}
+              highlight={item.highlight}
             />
-          ))
-        ) : (
-          children
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-0 border border-[var(--border-color)]">
+          {data ? (
+            data.map((item, index) => (
+              <KeyValueRow
+                key={index}
+                label={item.label}
+                value={item.value}
+                icon={item.icon}
+                highlight={item.highlight}
+              />
+            ))
+          ) : (
+            children
+          )}
+        </div>
+      )}
     </div>
   );
 }

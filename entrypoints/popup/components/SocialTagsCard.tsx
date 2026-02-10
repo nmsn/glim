@@ -1,3 +1,4 @@
+import { SectionHeader } from './SectionHeader';
 import { KeyValueRow } from './KeyValueRow';
 import type { SocialTagResult } from '@/utils/social-tag';
 
@@ -17,54 +18,52 @@ export function SocialTagsCard({ socialTags }: Props) {
   if (!hasData) return null;
 
   return (
-    <div className="mt-4">
-      <p className="text-left font-semibold mb-3 flex items-center gap-2">
-        <span>📱</span>
-        社交预览
-      </p>
+    <div className="mt-[10px]">
+      <SectionHeader title="社交标签" />
 
       {(socialTags.ogImage || socialTags.twitterImage) && (
-        <div className="mb-3 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+        <div className="mb-[8px] overflow-hidden border border-[var(--border-color)]">
           <img
             src={socialTags.ogImage || socialTags.twitterImage || ''}
             alt="Social Preview"
-            className="w-full max-h-[150px] object-cover"
+            className="w-full max-h-[120px] object-cover"
           />
         </div>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="border border-[var(--border-color)]">
         {socialTags.title && (
-          <KeyValueRow label="标题" value={socialTags.title} icon="📝" />
+          <KeyValueRow label="标题" value={socialTags.title} />
         )}
         {socialTags.description && (
-          <KeyValueRow label="描述" value={socialTags.description} icon="📃" />
+          <KeyValueRow label="描述" value={socialTags.description} />
         )}
         {socialTags.ogTitle && (
-          <KeyValueRow label="OG 标题" value={socialTags.ogTitle} icon="🔵" />
+          <KeyValueRow label="OG 标题" value={socialTags.ogTitle} />
         )}
         {socialTags.ogDescription && (
-          <KeyValueRow label="OG 描述" value={socialTags.ogDescription} icon="🔵" />
+          <KeyValueRow label="OG 描述" value={socialTags.ogDescription} />
         )}
         {socialTags.twitterCard && (
-          <KeyValueRow label="Twitter Card" value={socialTags.twitterCard} icon="🐦" />
+          <KeyValueRow label="Twitter Card" value={socialTags.twitterCard} />
         )}
         {socialTags.twitterTitle && (
-          <KeyValueRow label="Twitter 标题" value={socialTags.twitterTitle} icon="🐦" />
+          <KeyValueRow label="Twitter 标题" value={socialTags.twitterTitle} />
         )}
         {socialTags.canonicalUrl && (
-          <KeyValueRow label="Canonical URL" value={socialTags.canonicalUrl} icon="🔗" />
+          <KeyValueRow label="Canonical URL" value={socialTags.canonicalUrl} />
         )}
         {socialTags.themeColor && (
-          <div className="flex items-center gap-2.5 px-4 py-3 bg-white/60 rounded-xl shadow-sm">
-            <span className="text-lg">🎨</span>
-            <span className="text-xs font-bold text-gray-500 min-w-[80px]">主题色</span>
-            <span className="flex-1 text-right flex items-center justify-end gap-2">
+          <div className="flex items-center justify-between p-[6px_8px] border-b border-[var(--border-color)] last:border-b-0 hover:bg-[rgba(245,197,24,0.05)]">
+            <span className="text-[8px] text-[var(--gray-medium)] uppercase tracking-[0.3px]">
+              主题色
+            </span>
+            <span className="flex items-center gap-2">
               <span
-                className="w-6 h-6 rounded-lg border border-gray-200 shadow-sm"
+                className="w-[12px] h-[12px] border border-[var(--border-color)]"
                 style={{ backgroundColor: socialTags.themeColor }}
               />
-              <span className="text-sm font-semibold text-gray-800 font-mono">
+              <span className="text-[10px] text-[var(--text-primary)] font-[var(--font-mono)]">
                 {socialTags.themeColor}
               </span>
             </span>

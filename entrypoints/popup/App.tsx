@@ -128,40 +128,68 @@ function App() {
   // 按钮文案：首次获取中显示"获取中..."，已获取过显示"再次获取"
   const getButtonText = () => {
     if (loading) return loading;
-    return hasFetched ? '🔄 再次获取' : '获取当前页面信息';
+    return hasFetched ? '再次获取' : '获取当前页面信息';
   };
 
   return (
-    <>
-      <div className="card mt-5">
-        <button
-          onClick={getCurrentTabInfo}
-          disabled={!!loading}
-          className="px-4 py-2 rounded cursor-pointer transition-colors disabled:cursor-not-allowed"
-        >
-          {getButtonText()}
-        </button>
+    <div className="min-w-[360px] min-h-[600px] bg-[var(--bg-primary)] p-[8px] relative">
+      {/* 扫描线装饰 */}
+      <div className="scanline" />
 
+      {/* 头部 */}
+      <header className="border-b border-[var(--yellow)] pb-[8px] mb-[10px]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {/* 状态指示器 */}
+            <div className="flex gap-[4px]">
+              <div className="w-[6px] h-[6px] bg-[var(--green)] animate-pulse" />
+              <div className="w-[6px] h-[6px] bg-[var(--yellow)] animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <div className="w-[6px] h-[6px] bg-[var(--gray-medium)] animate-pulse" style={{ animationDelay: '1s' }} />
+            </div>
+            {/* 标题 */}
+            <h1 className="font-[var(--font-display)] text-[12px] font-semibold text-[var(--yellow)] uppercase tracking-[1px]">
+              GLIM
+            </h1>
+          </div>
+          {/* 版本号 */}
+          <span className="text-[8px] text-[var(--gray-medium)] font-[var(--font-mono)]">v1.0.0</span>
+        </div>
+
+        {/* 当前 URL */}
         {currentUrl && (
-          <div className="mt-[15px] text-left">
-            <KeyValueRow
-              label="当前地址"
-              value={currentUrl}
-              icon="🔗"
-            />
+          <div className="mt-[8px] pl-[10px] border-l-2 border-[var(--green)]">
+            <div className="text-[9px] text-[var(--gray-medium)] uppercase tracking-[0.3px] mb-[2px]">
+              当前地址
+            </div>
+            <div className="text-[9px] text-[var(--text-primary)] font-[var(--font-mono)] break-all">
+              {currentUrl}
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* 内容区 */}
+      <main className="space-y-[10px]">
+        {/* 加载状态 */}
+        {loading && (
+          <div className="flex items-center gap-2 p-[8px] border border-[var(--border-color)] bg-[var(--bg-secondary)]">
+            <div className="w-[8px] h-[8px] bg-[var(--yellow)] animate-pulse" />
+            <span className="text-[10px] text-[var(--gray-light)] font-[var(--font-mono)]">
+              {loading}
+            </span>
           </div>
         )}
 
-        {loading && (
-          <p className="mt-[10px]">{loading}</p>
-        )}
-
+        {/* 错误提示 */}
         {error && (
-          <p className="mt-[10px] text-red-500">
-            {error}
-          </p>
+          <div className="p-[8px] border border-[var(--yellow)] bg-[rgba(245,197,24,0.1)]">
+            <span className="text-[10px] text-[var(--yellow)] font-[var(--font-mono)]">
+              {error}
+            </span>
+          </div>
         )}
 
+        {/* 服务器位置 */}
         {ipLocations.length > 0 && (
           <ServerLocationCard
             ipLocations={ipLocations}
@@ -170,23 +198,47 @@ function App() {
           />
         )}
 
+        {/* 页面信息 */}
         {pageInfo && (
           <PageInfoCard pageInfo={pageInfo} />
         )}
 
+        {/* 社交标签 */}
         {hasSocialData && socialTags && (
           <SocialTagsCard socialTags={socialTags} />
         )}
 
+        {/* 安全检测 */}
         {security && (
           <SecurityCard security={security} />
         )}
 
+        {/* 响应头 */}
         {headers && (
           <HeadersCard headers={headers} />
         )}
-      </div>
-    </>
+      </main>
+
+      {/* 底部按钮 */}
+      <footer className="mt-[12px] pt-[8px] border-t border-[var(--gray-dark)]">
+        <button
+          onClick={getCurrentTabInfo}
+          disabled={!!loading}
+          className={`
+            w-full p-[8px] text-[9px] font-[var(--font-display)] uppercase tracking-[0.5px]
+            border transition-all cursor-pointer
+            ${loading
+              ? 'border-[var(--gray-dark)] text-[var(--gray-medium)] cursor-not-allowed'
+              : hasFetched
+                ? 'border-[var(--gray-dark)] text-[var(--gray-light)] hover:border-[var(--green)] hover:text-[var(--green)]'
+                : 'bg-[var(--yellow)] text-[var(--bg-primary)] border-[var(--yellow)] hover:bg-[var(--yellow-dim)]'
+            }
+          `}
+        >
+          {getButtonText()}
+        </button>
+      </footer>
+    </div>
   );
 }
 

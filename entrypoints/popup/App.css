@@ -1,15 +1,12 @@
+/* App specific styles */
 html, body {
-  min-width: 460px;
-  min-height: 660px;
+  min-width: 360px;
+  min-height: 600px;
   margin: 0;
   padding: 0;
 }
 
 #root {
-  min-width: 460px;
-  min-height: 660px;
-}
-
-.card {
-  padding: 2em;
+  min-width: 360px;
+  min-height: 600px;
 }

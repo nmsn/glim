@@ -2,14 +2,28 @@ interface Props {
   label: string;
   value: React.ReactNode;
   icon?: React.ReactNode;
+  highlight?: boolean;
 }
 
-export function KeyValueRow({ label, value, icon }: Props) {
+export function KeyValueRow({ label, value, icon, highlight }: Props) {
   return (
-    <div className="flex items-center gap-2.5 px-4 py-3 bg-white/60 rounded-xl shadow-sm">
-      {icon && <span className="text-lg">{icon}</span>}
-      <span className="text-xs font-bold text-gray-500 min-w-[80px]">{label}</span>
-      <span className="text-sm font-semibold text-gray-800 flex-1 text-right break-all">
+    <div
+      className={`
+        flex flex-col gap-[2px]
+        p-[6px_8px]
+        bg-[var(--bg-primary)]
+        border-b border-[var(--border-color)]
+        last:border-b-0
+        transition-colors
+        hover:bg-[rgba(245,197,24,0.05)]
+        ${highlight ? 'bg-[rgba(0,208,132,0.05)]' : ''}
+      `}
+    >
+      <span className="text-[8px] text-[var(--gray-medium)] uppercase tracking-[0.3px]">
+        {icon && <span className="mr-1">{icon}</span>}
+        {label}
+      </span>
+      <span className="text-[10px] text-[var(--text-primary)] font-[var(--font-mono)] break-all">
         {value}
       </span>
     </div>
