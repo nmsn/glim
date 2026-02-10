@@ -1,4 +1,4 @@
-import { DataCard } from './KeyValueCard';
+import { KeyValueCard } from './KeyValueCard';
 import type { PageInfo } from '@/utils/page-info';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 
 export function PageInfoCard({ pageInfo }: Props) {
   return (
-    <DataCard
+    <KeyValueCard
       title="页面信息"
       icon="📄"
       data={[

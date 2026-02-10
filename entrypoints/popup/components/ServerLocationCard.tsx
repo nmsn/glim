@@ -1,5 +1,5 @@
 
-import { DataCard } from './KeyValueCard';
+import { KeyValueCard } from './KeyValueCard';
 import MapChart from './MapChart';
 import type { ServerLocation } from '@/utils/server-location';
 
@@ -68,7 +68,7 @@ export function ServerLocationCard({
 
           {selectedIp.location && (
             <>
-              <DataCard
+              <KeyValueCard
                 title=""
                 icon=""
                 data={[

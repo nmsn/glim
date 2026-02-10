@@ -1,6 +1,6 @@
 import { KeyValueRow } from './KeyValueRow';
 
-interface RowProps {
+interface DataItem {
   label: string;
   value: React.ReactNode;
   icon?: React.ReactNode;
@@ -9,10 +9,11 @@ interface RowProps {
 interface Props {
   title: string;
   icon?: React.ReactNode;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  data?: DataItem[];
 }
 
-export function KeyValueCard({ title, icon, children }: Props) {
+export function KeyValueCard({ title, icon, children, data }: Props) {
   return (
     <div className="mt-4">
       <p className="text-left font-semibold mb-3 flex items-center gap-2">
@@ -20,40 +21,18 @@ export function KeyValueCard({ title, icon, children }: Props) {
         {title}
       </p>
       <div className="flex flex-col gap-2">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-interface DataItem {
-  label: string;
-  value: React.ReactNode;
-  icon?: React.ReactNode;
-}
-
-interface DataCardProps {
-  title: string;
-  icon?: React.ReactNode;
-  data: DataItem[];
-}
-
-export function DataCard({ title, icon, data }: DataCardProps) {
-  return (
-    <div className="mt-4">
-      <p className="text-left font-semibold mb-3 flex items-center gap-2">
-        {icon && <span>{icon}</span>}
-        {title}
-      </p>
-      <div className="flex flex-col gap-2">
-        {data.map((item, index) => (
-          <KeyValueRow
-            key={index}
-            label={item.label}
-            value={item.value}
-            icon={item.icon}
-          />
-        ))}
+        {data ? (
+          data.map((item, index) => (
+            <KeyValueRow
+              key={index}
+              label={item.label}
+              value={item.value}
+              icon={item.icon}
+            />
+          ))
+        ) : (
+          children
+        )}
       </div>
     </div>
   );

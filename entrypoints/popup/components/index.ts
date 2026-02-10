@@ -1,5 +1,5 @@
 export { KeyValueRow } from './KeyValueRow';
-export { KeyValueCard, DataCard } from './KeyValueCard';
+export { KeyValueCard } from './KeyValueCard';
 export { ServerLocationCard } from './ServerLocationCard';
 export { PageInfoCard } from './PageInfoCard';
 export { SocialTagsCard } from './SocialTagsCard';
