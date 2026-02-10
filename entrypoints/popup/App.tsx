@@ -12,8 +12,7 @@ import { PageInfoCard } from './components/PageInfoCard';
 import { SocialTagsCard } from './components/SocialTagsCard';
 import { SecurityCard } from './components/SecurityCard';
 import { HeadersCard } from './components/HeadersCard';
-import { KeyValueRow } from './components/KeyValueRow';
-import './App.css';
+import './style.css';
 
 interface IpLocationInfo {
   ip: string;
@@ -112,7 +111,6 @@ function App() {
     }
   };
 
-  // 组件挂载时自动执行获取
   useEffect(() => {
     getCurrentTabInfo();
   }, []);
@@ -125,71 +123,60 @@ function App() {
     socialTags.twitterCard
   );
 
-  // 按钮文案：首次获取中显示"获取中..."，已获取过显示"再次获取"
   const getButtonText = () => {
     if (loading) return loading;
     return hasFetched ? '再次获取' : '获取当前页面信息';
   };
 
   return (
-    <div className="min-w-[360px] min-h-[600px] bg-[var(--bg-primary)] p-[8px] relative">
-      {/* 扫描线装饰 */}
+    <div className="min-w-[360px] min-h-[600px] [background:var(--bg-primary)] p-[8px] relative font-['var(--font-mono)']">
       <div className="scanline" />
 
-      {/* 头部 */}
-      <header className="border-b border-[var(--yellow)] pb-[8px] mb-[10px]">
+      <header className="border-b border-yellow pb-[8px] mb-[10px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* 状态指示器 */}
             <div className="flex gap-[4px]">
-              <div className="w-[6px] h-[6px] bg-[var(--green)] animate-pulse" />
-              <div className="w-[6px] h-[6px] bg-[var(--yellow)] animate-pulse" style={{ animationDelay: '0.5s' }} />
-              <div className="w-[6px] h-[6px] bg-[var(--gray-medium)] animate-pulse" style={{ animationDelay: '1s' }} />
+              <div className="w-[6px] h-[6px] bg-green animate-pulse" />
+              <div className="w-[6px] h-[6px] bg-yellow animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <div className="w-[6px] h-[6px] bg-gray-medium animate-pulse" style={{ animationDelay: '1s' }} />
             </div>
-            {/* 标题 */}
-            <h1 className="font-[var(--font-display)] text-[12px] font-semibold text-[var(--yellow)] uppercase tracking-[1px]">
+            <h1 className="font-['var(--font-display)'] text-[12px] font-semibold text-yellow uppercase tracking-[1px]">
               GLIM
             </h1>
           </div>
-          {/* 版本号 */}
-          <span className="text-[8px] text-[var(--gray-medium)] font-[var(--font-mono)]">v1.0.0</span>
+          <span className="text-[8px] text-gray-medium font-['var(--font-mono)']">v1.0.0</span>
         </div>
 
-        {/* 当前 URL */}
         {currentUrl && (
-          <div className="mt-[8px] pl-[10px] border-l-2 border-[var(--green)]">
-            <div className="text-[9px] text-[var(--gray-medium)] uppercase tracking-[0.3px] mb-[2px]">
+          <div className="mt-[8px] pl-[10px] border-l-2 border-green">
+            <div className="text-[9px] text-gray-medium uppercase tracking-[0.3px] mb-[2px]">
               当前地址
             </div>
-            <div className="text-[9px] text-[var(--text-primary)] font-[var(--font-mono)] break-all">
+            <div className="text-[9px] [color:var(--text-primary)] font-['var(--font-mono)'] break-all">
               {currentUrl}
             </div>
           </div>
         )}
       </header>
 
-      {/* 内容区 */}
       <main className="space-y-[10px]">
-        {/* 加载状态 */}
         {loading && (
-          <div className="flex items-center gap-2 p-[8px] border border-[var(--border-color)] bg-[var(--bg-secondary)]">
-            <div className="w-[8px] h-[8px] bg-[var(--yellow)] animate-pulse" />
-            <span className="text-[10px] text-[var(--gray-light)] font-[var(--font-mono)]">
+          <div className="flex items-center gap-2 p-[8px] border [border-color:var(--border-color)] [background:var(--bg-secondary)]">
+            <div className="w-[8px] h-[8px] bg-yellow animate-pulse" />
+            <span className="text-[10px] text-gray-light font-['var(--font-mono)']">
               {loading}
             </span>
           </div>
         )}
 
-        {/* 错误提示 */}
         {error && (
-          <div className="p-[8px] border border-[var(--yellow)] bg-[rgba(245,197,24,0.1)]">
-            <span className="text-[10px] text-[var(--yellow)] font-[var(--font-mono)]">
+          <div className="p-[8px] border border-yellow bg-yellow/10">
+            <span className="text-[10px] text-yellow font-['var(--font-mono)']">
               {error}
             </span>
           </div>
         )}
 
-        {/* 服务器位置 */}
         {ipLocations.length > 0 && (
           <ServerLocationCard
             ipLocations={ipLocations}
@@ -198,40 +185,35 @@ function App() {
           />
         )}
 
-        {/* 页面信息 */}
         {pageInfo && (
           <PageInfoCard pageInfo={pageInfo} />
         )}
 
-        {/* 社交标签 */}
         {hasSocialData && socialTags && (
           <SocialTagsCard socialTags={socialTags} />
         )}
 
-        {/* 安全检测 */}
         {security && (
           <SecurityCard security={security} />
         )}
 
-        {/* 响应头 */}
         {headers && (
           <HeadersCard headers={headers} />
         )}
       </main>
 
-      {/* 底部按钮 */}
-      <footer className="mt-[12px] pt-[8px] border-t border-[var(--gray-dark)]">
+      <footer className="mt-[12px] pt-[8px] border-t border-gray-dark">
         <button
           onClick={getCurrentTabInfo}
           disabled={!!loading}
           className={`
-            w-full p-[8px] text-[9px] font-[var(--font-display)] uppercase tracking-[0.5px]
+            w-full p-[8px] text-[9px] font-['var(--font-display)'] uppercase tracking-[0.5px]
             border transition-all cursor-pointer
             ${loading
-              ? 'border-[var(--gray-dark)] text-[var(--gray-medium)] cursor-not-allowed'
+              ? 'border-gray-dark text-gray-medium cursor-not-allowed'
               : hasFetched
-                ? 'border-[var(--gray-dark)] text-[var(--gray-light)] hover:border-[var(--green)] hover:text-[var(--green)]'
-                : 'bg-[var(--yellow)] text-[var(--bg-primary)] border-[var(--yellow)] hover:bg-[var(--yellow-dim)]'
+                ? 'border-gray-dark text-gray-light hover:border-green hover:text-green'
+                : 'bg-yellow [color:var(--bg-primary)] border-yellow hover:bg-yellow-dim'
             }
           `}
         >

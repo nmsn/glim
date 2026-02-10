@@ -1,40 +1,43 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
 
+@theme {
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+
+  --color-yellow: #f5c518;
+  --color-yellow-dim: #b3920f;
+  --color-green: #00d084;
+  --color-green-dim: #00965f;
+  --color-gray-light: #a0a0a0;
+  --color-gray-medium: #606060;
+  --color-gray-dark: #2a2a2c;
+}
+
 :root {
-  /* 背景色 */
   --bg-primary: #0a0a0b;
   --bg-secondary: #141416;
   --bg-tertiary: #1c1c1f;
 
-  /* 主题色 */
   --yellow: #f5c518;
   --yellow-dim: #b3920f;
   --green: #00d084;
   --green-dim: #00965f;
 
-  /* 中性色 */
   --gray-light: #a0a0a0;
   --gray-medium: #606060;
   --gray-dark: #2a2a2c;
 
-  /* 功能色 */
   --border-color: #333335;
   --text-primary: #e8e8e8;
   --text-secondary: #909090;
 
-  /* 字体 */
-  --font-display: 'Orbitron', sans-serif;
-  --font-mono: 'Share Tech Mono', monospace;
-
-  /* 间距 */
   --spacing-xs: 4px;
   --spacing-sm: 6px;
   --spacing-md: 8px;
   --spacing-lg: 10px;
   --spacing-xl: 12px;
 
-  /* 尺寸 */
   --max-width: 360px;
   --min-height: 600px;
 }
@@ -61,7 +64,6 @@ html, body {
   background: var(--bg-primary);
 }
 
-/* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 3px;
 }
@@ -74,25 +76,21 @@ html, body {
   background: var(--gray-dark);
 }
 
-/* 脉冲动画 */
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
 
-/* 扫描线动画 */
 @keyframes scan {
   0% { transform: translateY(0); }
   100% { transform: translateY(500px); }
 }
 
-/* 波纹动画 */
 @keyframes ripple {
   0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
 }
 
-/* 扫描线装饰 */
 .scanline {
   position: fixed;
   top: 0;

@@ -22,7 +22,7 @@ export function KeyValueCard({ title, icon, children, data, variant = 'default' 
       <SectionHeader title={title} icon={icon} />
 
       {variant === 'grid' && data ? (
-        <div className="grid grid-cols-2 gap-[1px] bg-[var(--border-color)] border border-[var(--border-color)]">
+        <div className="grid grid-cols-2 gap-[1px] bg-[var(--border-color)] border [border-color:var(--border-color)]">
           {data.map((item, index) => (
             <KeyValueRow
               key={index}
@@ -34,7 +34,7 @@ export function KeyValueCard({ title, icon, children, data, variant = 'default' 
           ))}
         </div>
       ) : (
-        <div className="flex flex-col gap-0 border border-[var(--border-color)]">
+        <div className="flex flex-col gap-0 border [border-color:var(--border-color)]">
           {data ? (
             data.map((item, index) => (
               <KeyValueRow

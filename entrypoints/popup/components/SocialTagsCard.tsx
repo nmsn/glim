@@ -22,7 +22,7 @@ export function SocialTagsCard({ socialTags }: Props) {
       <SectionHeader title="社交标签" />
 
       {(socialTags.ogImage || socialTags.twitterImage) && (
-        <div className="mb-[8px] overflow-hidden border border-[var(--border-color)]">
+        <div className="mb-[8px] overflow-hidden border [border-color:var(--border-color)]">
           <img
             src={socialTags.ogImage || socialTags.twitterImage || ''}
             alt="Social Preview"
@@ -31,7 +31,7 @@ export function SocialTagsCard({ socialTags }: Props) {
         </div>
       )}
 
-      <div className="border border-[var(--border-color)]">
+      <div className="border [border-color:var(--border-color)]">
         {socialTags.title && (
           <KeyValueRow label="标题" value={socialTags.title} />
         )}
@@ -54,16 +54,16 @@ export function SocialTagsCard({ socialTags }: Props) {
           <KeyValueRow label="Canonical URL" value={socialTags.canonicalUrl} />
         )}
         {socialTags.themeColor && (
-          <div className="flex items-center justify-between p-[6px_8px] border-b border-[var(--border-color)] last:border-b-0 hover:bg-[rgba(245,197,24,0.05)]">
-            <span className="text-[8px] text-[var(--gray-medium)] uppercase tracking-[0.3px]">
+          <div className="flex items-center justify-between p-[6px_8px] border-b [border-color:var(--border-color)] last:border-b-0 hover:bg-yellow/5">
+            <span className="text-[8px] text-gray-medium uppercase tracking-[0.3px]">
               主题色
             </span>
             <span className="flex items-center gap-2">
               <span
-                className="w-[12px] h-[12px] border border-[var(--border-color)]"
+                className="w-[12px] h-[12px] border [border-color:var(--border-color)]"
                 style={{ backgroundColor: socialTags.themeColor }}
               />
-              <span className="text-[10px] text-[var(--text-primary)] font-[var(--font-mono)]">
+              <span className="text-[10px] [color:var(--text-primary)] font-['var(--font-mono)']">
                 {socialTags.themeColor}
               </span>
             </span>

@@ -34,11 +34,11 @@ export function ServerLocationCard({
               key={index}
               onClick={() => onSelectIp(index)}
               className={`
-                px-[8px] py-[4px] text-[9px] cursor-pointer transition-all font-[var(--font-mono)]
-                border border-[var(--border-color)]
+                px-[8px] py-[4px] text-[9px] cursor-pointer transition-all font-['var(--font-mono)']
+                border [border-color:var(--border-color)]
                 ${selectedIpIndex === index
-                  ? 'bg-[var(--yellow)] text-[var(--bg-primary)] border-[var(--yellow)]'
-                  : 'bg-transparent text-[var(--gray-light)] hover:border-[var(--green)] hover:text-[var(--green)]'
+                  ? 'bg-yellow [color:var(--bg-primary)] border-yellow'
+                  : 'transparent text-gray-light hover:border-green hover:text-green'
                 }
               `}
             >
@@ -49,23 +49,22 @@ export function ServerLocationCard({
       )}
 
       {selectedIp && (
-        <div className="border border-[var(--border-color)] bg-[var(--bg-secondary)]">
+        <div className="border [border-color:var(--border-color)] [background:var(--bg-secondary)]">
           {selectedIp.loading && (
-            <div className="p-[8px] text-[10px] text-[var(--gray-medium)]">
+            <div className="p-[8px] text-[10px] text-gray-medium">
               正在获取位置信息...
             </div>
           )}
 
           {selectedIp.error && (
-            <div className="p-[8px] text-[10px] text-[var(--yellow)]">
+            <div className="p-[8px] text-[10px] text-yellow">
               错误: {selectedIp.error}
             </div>
           )}
 
           {selectedIp.location && (
             <div className="grid grid-cols-[100px_1fr] gap-[1px] bg-[var(--border-color)]">
-              {/* 左侧位置信息 */}
-              <div className="bg-[var(--bg-primary)]">
+              <div className="[background:var(--bg-primary)]">
                 <KeyValueRow
                   label="位置"
                   value={`${selectedIp.location.city}, ${selectedIp.location.country}`}
@@ -84,8 +83,7 @@ export function ServerLocationCard({
                 />
               </div>
 
-              {/* 右侧地图 */}
-              <div className="bg-[var(--bg-primary)] min-h-[100px]">
+              <div className="[background:var(--bg-primary)] min-h-[100px]">
                 <MapChart
                   lat={selectedIp.location.coords.lat}
                   lon={selectedIp.location.coords.lon}
