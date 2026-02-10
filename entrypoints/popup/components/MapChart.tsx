@@ -5,7 +5,7 @@ import {
   Annotation,
 } from 'react-simple-maps';
 
-import colors from './colors.ts';
+import colors from '../colors.ts';
 import MapFeatures from '@/assets/map-features.json';
 
 interface Props {
