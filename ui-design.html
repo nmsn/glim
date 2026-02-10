@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebInfo Pro - 网站信息检测器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #141416;
+            --bg-tertiary: #1c1c1f;
+            --yellow: #f5c518;
+            --yellow-dim: #b3920f;
+            --green: #00d084;
+            --green-dim: #00965f;
+            --gray-light: #a0a0a0;
+            --gray-medium: #606060;
+            --gray-dark: #2a2a2c;
+            --border-color: #333335;
+            --text-primary: #e8e8e8;
+            --text-secondary: #909090;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 8px;
+            line-height: 1.4;
+            font-size: 10px;
+        }
+
+        /* 主容器 - 模拟插件面板 */
+        .plugin-container {
+            width: 100%;
+            max-width: 360px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 装饰性边角 */
+        .plugin-container::before,
+        .plugin-container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--yellow);
+        }
+
+        .plugin-container::before {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .plugin-container::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* 头部区域 */
+        .header {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--yellow);
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--yellow) 20%, var(--yellow) 80%, transparent 100%);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .status-indicator {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            box-shadow: 0 0 6px var(--green), 0 0 12px var(--green-dim);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--yellow);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .current-url {
+            font-size: 9px;
+            color: var(--text-secondary);
+            word-break: break-all;
+            padding: 3px 6px;
+            background: var(--bg-primary);
+            border-left: 2px solid var(--green);
+        }
+
+        /* 内容区域 */
+        .content {
+            padding: 8px;
+        }
+
+        /* 信息区块 */
+        .section {
+            margin-bottom: 10px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--gray-dark);
+        }
+
+        .section-icon {
+            width: 2px;
+            height: 10px;
+            background: var(--green);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* 双列网格布局 */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+        }
+
+        /* 数据项 - 紧凑版 */
+        .data-item {
+            background: var(--bg-primary);
+            padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .data-item-label {
+            font-size: 8px;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .data-item-value {
+            font-size: 10px;
+            color: var(--text-primary);
+            word-break: break-all;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* 特殊值样式 */
+        .value-highlight {
+            color: var(--yellow);
+            font-weight: 600;
+        }
+
+        .value-success {
+            color: var(--green);
+        }
+
+        /* IP地址列表 */
+        .ip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .ip-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 5px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--gray-dark);
+            font-size: 9px;
+            color: var(--green);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .ip-tag::before {
+            content: '◆';
+            margin-right: 3px;
+            font-size: 6px;
+            color: var(--yellow);
+        }
+
+        /* 服务器位置 + 地图 */
+        .location-section {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .location-info {
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-row {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .location-row:last-child {
+            border-bottom: none;
+        }
+
+        .location-label {
+            font-size: 7px;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 1px;
+        }
+
+        .location-value {
+            font-size: 9px;
+            color: var(--text-primary);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* 地图容器 */
+        .map-container {
+            background: var(--bg-primary);
+            position: relative;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            min-height: 100px;
+            background: 
+                linear-gradient(135deg, rgba(0, 208, 132, 0.05) 0%, transparent 50%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 19px,
+                    rgba(51, 51, 53, 0.3) 20px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 19px,
+                    rgba(51, 51, 53, 0.3) 20px
+                );
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-marker {
+            width: 12px;
+            height: 12px;
+            background: var(--green);
+            position: relative;
+            animation: marker-pulse 2s ease-out infinite;
+        }
+
+        .map-marker::before,
+        .map-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid var(--green);
+        }
+
+        .map-marker::before {
+            width: 20px;
+            height: 20px;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        .map-marker::after {
+            width: 28px;
+            height: 28px;
+            animation: ripple 2s ease-out infinite 0.5s;
+        }
+
+        @keyframes marker-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes ripple {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
+
+        .map-coords {
+            position: absolute;
+            bottom: 4px;
+            right: 6px;
+            font-size: 8px;
+            color: var(--gray-medium);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* 安全状态指示器 */
+        .security-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .security-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--green);
+            font-size: 12px;
+        }
+
+        .security-info {
+            flex: 1;
+        }
+
+        .security-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            color: var(--green);
+            margin-bottom: 1px;
+        }
+
+        .security-desc {
+            font-size: 8px;
+            color: var(--gray-light);
+        }
+
+        /* 响应式头部信息 */
+        .response-headers {
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .response-headers::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .response-headers::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        .response-headers::-webkit-scrollbar-thumb {
+            background: var(--gray-dark);
+        }
+
+        .header-row {
+            display: flex;
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 8px;
+        }
+
+        .header-row:last-child {
+            border-bottom: none;
+        }
+
+        .header-name {
+            width: 90px;
+            color: var(--yellow-dim);
+            flex-shrink: 0;
+            text-transform: lowercase;
+        }
+
+        .header-value {
+            color: var(--gray-light);
+            word-break: break-all;
+        }
+
+        /* 底部操作区 */
+        .footer {
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 6px 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--yellow);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--yellow-dim);
+            box-shadow: 0 0 10px rgba(245, 197, 24, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--gray-dark);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* 扫描线效果 */
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+            opacity: 0.5;
+            animation: scan 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(500px); }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 10px;
+        }
+
+        .loading-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--yellow);
+            animation: loading 1.4s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes loading {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="plugin-container">
+        <div class="scanline"></div>
+        
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-top">
+                <div class="status-indicator"></div>
+                <h1 class="header-title">WebInfo Pro</h1>
+            </div>
+            <div class="current-url">https://www.baidu.com/s?wd=example&rn=50</div>
+        </header>
+
+        <!-- 内容区 -->
+        <div class="content">
+            <!-- 基础信息 - 两列布局 -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon"></div>
+                    <h2 class="section-title">基础信息</h2>
+                </div>
+                <div class="two-col-grid">
+                    <div class="data-item">
+                        <div class="data-item-label">域名</div>
+                        <div class="data-item-value value-highlight">www.baidu.com</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">协议</div>
+                        <div class="data-item-value value-success">HTTPS</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">页面标题</div>
+                        <div class="data-item-value">百度一下，你就知道</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">编码</div>
+                        <div class="data-item-value">UTF-8</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- IP地址信息 - 两列布局 -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon"></div>
+                    <h2 class="section-title">DNS解析</h2>
+                </div>
+                <div class="two-col-grid">
+                    <div class="data-item" style="grid-column: span 2;">
+                        <div class="data-item-label">IP地址</div>
+                        <div class="data-item-value">
+                            <div class="ip-list">
+                                <span class="ip-tag">110.242.74.102</span>
+                                <span class="ip-tag">111.63.65.247</span>
+                                <span class="ip-tag">111.63.65.103</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">TTL</div>
+                        <div class="data-item-value">386s</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">类型</div>
+                        <div class="data-item-value">A记录</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 服务器位置 - 左信息右地图 -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon"></div>
+                    <h2 class="section-title">服务器位置</h2>
+                </div>
+                <div class="location-section">
+                    <div class="location-info">
+                        <div class="location-row">
+                            <div class="location-label">国家</div>
+                            <div class="location-value">中国</div>
+                        </div>
+                        <div class="location-row">
+                            <div class="location-label">城市</div>
+                            <div class="location-value">北京</div>
+                        </div>
+                        <div class="location-row">
+                            <div class="location-label">运营商</div>
+                            <div class="location-value">电信</div>
+                        </div>
+                        <div class="location-row">
+                            <div class="location-label">时区</div>
+                            <div class="location-value">UTC+8</div>
+                        </div>
+                    </div>
+                    <div class="map-container">
+                        <div class="map-placeholder">
+                            <div class="map-marker"></div>
+                            <div class="map-coords">39.9°N 116.4°E</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 安全状态 -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon"></div>
+                    <h2 class="section-title">安全检测</h2>
+                </div>
+                <div class="security-status">
+                    <div class="security-icon">✓</div>
+                    <div class="security-info">
+                        <div class="security-title">连接安全</div>
+                        <div class="security-desc">TLS 1.3 · 证书有效 · 已加密</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 响应头信息 -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon"></div>
+                    <h2 class="section-title">响应头</h2>
+                </div>
+                <div class="two-col-grid response-headers">
+                    <div class="data-item">
+                        <div class="data-item-label">content-type</div>
+                        <div class="data-item-value">text/html;charset=utf-8</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">server</div>
+                        <div class="data-item-value">BWS/1.1</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">cache-control</div>
+                        <div class="data-item-value">private</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-item-label">x-frame-options</div>
+                        <div class="data-item-value">SAMEORIGIN</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 底部按钮 -->
+        <footer class="footer">
+            <button class="btn btn-secondary">刷新</button>
+            <button class="btn btn-primary">导出报告</button>
+        </footer>
+    </div>
+</body>
+</html>
