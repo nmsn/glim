@@ -3,10 +3,27 @@ import { KeyValueRow } from './KeyValueRow';
 import type { SocialTagResult } from '@/utils/social-tag';
 
 interface Props {
-  socialTags: SocialTagResult;
+  socialTags: SocialTagResult | null;
+  loading?: boolean;
 }
 
-export function SocialTagsCard({ socialTags }: Props) {
+export function SocialTagsCard({ socialTags, loading }: Props) {
+  if (loading && !socialTags) {
+    return (
+      <div className="mt-[10px]">
+        <SectionHeader title="社交标签" loading={loading} />
+        <div className="border [border-color:var(--border-color)] p-[8px]">
+          <div className="flex items-center gap-2">
+            <div className="w-[8px] h-[8px] bg-yellow animate-pulse" />
+            <span className="text-[10px] text-gray-medium">正在获取社交标签...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!socialTags) return null;
+
   const hasData = (
     socialTags.title ||
     socialTags.description ||
@@ -19,7 +36,7 @@ export function SocialTagsCard({ socialTags }: Props) {
 
   return (
     <div className="mt-[10px]">
-      <SectionHeader title="社交标签" />
+      <SectionHeader title="社交标签" loading={loading} />
 
       {(socialTags.ogImage || socialTags.twitterImage) && (
         <div className="mb-[8px] overflow-hidden border [border-color:var(--border-color)]">
@@ -31,7 +48,7 @@ export function SocialTagsCard({ socialTags }: Props) {
         </div>
       )}
 
-      <div className="border [border-color:var(--border-color)]">
+      <div className={`border [border-color:var(--border-color)] ${loading ? 'opacity-50' : ''}`}>
         {socialTags.title && (
           <KeyValueRow label="标题" value={socialTags.title} />
         )}

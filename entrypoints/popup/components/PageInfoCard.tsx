@@ -2,14 +2,35 @@ import { KeyValueCard } from './KeyValueCard';
 import type { PageInfo } from '@/utils/page-info';
 
 interface Props {
-  pageInfo: PageInfo;
+  pageInfo: PageInfo | null;
+  loading?: boolean;
 }
 
-export function PageInfoCard({ pageInfo }: Props) {
+export function PageInfoCard({ pageInfo, loading }: Props) {
+  if (loading && !pageInfo) {
+    return (
+      <KeyValueCard
+        title="基础信息"
+        variant="grid"
+        loading={loading}
+        data={[
+          { label: '标题', value: '...' },
+          { label: '来源', value: '...' },
+          { label: 'Content-Type', value: '...' },
+          { label: '字符编码', value: '...' },
+          { label: 'HTML 长度', value: '...' },
+        ]}
+      />
+    );
+  }
+
+  if (!pageInfo) return null;
+
   return (
     <KeyValueCard
       title="基础信息"
       variant="grid"
+      loading={loading}
       data={[
         { label: '标题', value: pageInfo.title || '(无标题)' },
         { label: '来源', value: pageInfo.referrer || '(无)' },

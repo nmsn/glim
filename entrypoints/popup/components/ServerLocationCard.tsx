@@ -14,18 +14,29 @@ interface Props {
   ipLocations: IpLocationInfo[];
   selectedIpIndex: number;
   onSelectIp: (index: number) => void;
+  loading?: boolean;
 }
 
 export function ServerLocationCard({
   ipLocations,
   selectedIpIndex,
   onSelectIp,
+  loading,
 }: Props) {
   const selectedIp = ipLocations[selectedIpIndex];
 
   return (
     <div className="mt-[10px]">
-      <SectionHeader title="服务器位置" />
+      <SectionHeader title="服务器位置" loading={loading} />
+
+      {loading && ipLocations.length === 0 && (
+        <div className="border [border-color:var(--border-color)] [background:var(--bg-secondary)] p-[8px]">
+          <div className="flex items-center gap-2">
+            <div className="w-[8px] h-[8px] bg-yellow animate-pulse" />
+            <span className="text-[10px] text-gray-medium">正在获取服务器位置...</span>
+          </div>
+        </div>
+      )}
 
       {ipLocations.length > 1 && (
         <div className="flex gap-[6px] mb-[8px] flex-wrap">

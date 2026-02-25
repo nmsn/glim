@@ -14,15 +14,16 @@ interface Props {
   children?: React.ReactNode;
   data?: DataItem[];
   variant?: 'default' | 'grid';
+  loading?: boolean;
 }
 
-export function KeyValueCard({ title, icon, children, data, variant = 'default' }: Props) {
+export function KeyValueCard({ title, icon, children, data, variant = 'default', loading }: Props) {
   return (
     <div className="mt-[10px]">
-      <SectionHeader title={title} icon={icon} />
+      <SectionHeader title={title} icon={icon} loading={loading} />
 
       {variant === 'grid' && data ? (
-        <div className="grid grid-cols-2 gap-[1px] bg-[var(--border-color)] border [border-color:var(--border-color)]">
+        <div className={`grid grid-cols-2 gap-[1px] bg-[var(--border-color)] border [border-color:var(--border-color)] ${loading ? 'opacity-50' : ''}`}>
           {data.map((item, index) => (
             <KeyValueRow
               key={index}
@@ -34,7 +35,7 @@ export function KeyValueCard({ title, icon, children, data, variant = 'default' 
           ))}
         </div>
       ) : (
-        <div className="flex flex-col gap-0 border [border-color:var(--border-color)]">
+        <div className={`flex flex-col gap-0 border [border-color:var(--border-color)] ${loading ? 'opacity-50' : ''}`}>
           {data ? (
             data.map((item, index) => (
               <KeyValueRow
