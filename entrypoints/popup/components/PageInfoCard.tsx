@@ -11,8 +11,6 @@ export function PageInfoCard({ pageInfo, loading }: Props) {
     return (
       <KeyValueCard
         title="基础信息"
-        variant="grid"
-        loading={loading}
         data={[
           { label: '标题', value: '...' },
           { label: '来源', value: '...' },
@@ -20,6 +18,7 @@ export function PageInfoCard({ pageInfo, loading }: Props) {
           { label: '字符编码', value: '...' },
           { label: 'HTML 长度', value: '...' },
         ]}
+        loading={true}
       />
     );
   }
@@ -29,8 +28,6 @@ export function PageInfoCard({ pageInfo, loading }: Props) {
   return (
     <KeyValueCard
       title="基础信息"
-      variant="grid"
-      loading={loading}
       data={[
         { label: '标题', value: pageInfo.title || '(无标题)' },
         { label: '来源', value: pageInfo.referrer || '(无)' },
@@ -38,6 +35,7 @@ export function PageInfoCard({ pageInfo, loading }: Props) {
         { label: '字符编码', value: pageInfo.charset || '(无)' },
         { label: 'HTML 长度', value: `${pageInfo.html.length} 字符` },
       ]}
+      loading={loading}
     />
   );
 }
