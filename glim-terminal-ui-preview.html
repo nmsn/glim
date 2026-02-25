@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLIM - Terminal UI 预览</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ===== Terminal UI Design System ===== */
+    /* 基于 TERMINAL_UI_DESIGN_SPEC.md 设计规范 */
+
+    :root {
+      /* 基础配色 - Nord 主题 */
+      --color-bg: #2e3440;
+      --color-fg: #d8dee9;
+      --color-muted: #4c566a;
+      --color-border: #434c5e;
+      --color-accent: #88c0d0;
+      --color-hover: #3b4252;
+
+      /* 组件配置 */
+      --widget-radius: 0px;
+      --font-display: 'Orbitron', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Share Tech Mono', monospace;
+
+      /* 间距 */
+      --spacing-xs: 4px;
+      --spacing-sm: 6px;
+      --spacing-md: 8px;
+      --spacing-lg: 10px;
+      --spacing-xl: 12px;
+    }
+
+    /* ===== 主题变体 ===== */
+    [data-theme="darkish"] {
+      --color-bg: #0d0d0d;
+      --color-fg: #e0e0e0;
+      --color-muted: #777777;
+      --color-border: #333333;
+      --color-accent: #ffffff;
+      --color-hover: #222222;
+    }
+
+    [data-theme="nord"] {
+      --color-bg: #2e3440;
+      --color-fg: #d8dee9;
+      --color-muted: #4c566a;
+      --color-border: #434c5e;
+      --color-accent: #88c0d0;
+      --color-hover: #3b4252;
+    }
+
+    [data-theme="dracula"] {
+      --color-bg: #282a36;
+      --color-fg: #f8f8f2;
+      --color-muted: #6272a4;
+      --color-border: #44475a;
+      --color-accent: #bd93f9;
+      --color-hover: #44475a;
+    }
+
+    [data-theme="cyberpunk"] {
+      --color-bg: #000b1e;
+      --color-fg: #00f3ff;
+      --color-muted: #054863;
+      --color-border: #003a5c;
+      --color-accent: #ff003c;
+      --color-hover: #001a3d;
+    }
+
+    [data-theme="crt"] {
+      --color-bg: #050505;
+      --color-fg: #33ff33;
+      --color-muted: #1b5e20;
+      --color-border: #2e7d32;
+      --color-accent: #69f0ae;
+      --color-hover: #0a1a0b;
+    }
+
+    [data-theme="gruvbox"] {
+      --color-bg: #282828;
+      --color-fg: #ebdbb2;
+      --color-muted: #928374;
+      --color-border: #504945;
+      --color-accent: #fabd2f;
+      --color-hover: #3c3836;
+    }
+
+    /* ===== 基础样式 ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-mono);
+      background: var(--color-bg);
+      color: var(--color-fg);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===== 滚动条样式 ===== */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 0px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-accent);
+    }
+
+    /* ===== 布局容器 ===== */
+    .preview-container {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: var(--spacing-md);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      min-height: calc(100vh - 40px);
+    }
+
+    .fullscreen-container {
+      width: 100%;
+      min-height: 100vh;
+      padding: var(--spacing-md);
+    }
+
+    /* ===== 标题栏 ===== */
+    .header {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      box-shadow: 0 0 6px var(--color-accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .app-title {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px var(--color-accent);
+    }
+
+    .url-display {
+      margin-top: var(--spacing-sm);
+      padding-left: var(--spacing-md);
+      border-left: 2px solid var(--color-accent);
+    }
+
+    .url-label {
+      font-size: 10px;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .url-text {
+      font-size: 10px;
+      color: var(--color-fg);
+      word-break: break-all;
+      opacity: 0.8;
+    }
+
+    /* ===== 按钮样式 ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 1px solid var(--color-border);
+      background: transparent;
+      color: var(--color-fg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      text-shadow: 0 0 8px var(--color-accent);
+    }
+
+    .btn-primary {
+      background: var(--color-accent);
+      color: var(--color-bg);
+      border-color: var(--color-accent);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--color-accent);
+    }
+
+    /* ===== Card 基础样式 ===== */
+    .card {
+      position: relative;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      padding: var(--spacing-md);
+      overflow: visible;
+    }
+
+    .card-title-bar {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .card-title {
+      background: var(--color-bg);
+      padding: 0 8px;
+      margin-left: 12px;
+      color: var(--color-muted);
+      font-weight: bold;
+      text-transform: lowercase;
+      font-size: 12px;
+      transition: color 300ms, text-shadow 300ms;
+    }
+
+    .card-close {
+      background: var(--color-bg);
+      padding: 0 8px;
+      margin-right: 12px;
+      color: var(--color-muted);
+      cursor: pointer;
+      font-size: 12px;
+      pointer-events: auto;
+    }
+
+    .card-close:hover {
+      color: #ff4444;
+    }
+
+    .card-content {
+      margin-top: 8px;
+    }
+
+    /* ===== 边框发光效果 ===== */
+    .card-glow-border {
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      right: -1px;
+      bottom: -1px;
+      pointer-events: none;
+      z-index: 10;
+      overflow: visible;
+    }
+
+    .card-glow-border svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .card-glow-border path {
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-width: 1;
+      stroke-dasharray: var(--perimeter);
+      stroke-dashoffset: var(--perimeter);
+      opacity: 0;
+      transition: opacity 0.3s ease, stroke-dashoffset 0s linear 0.3s;
+    }
+
+    .card-glow:hover .card-glow-border path {
+      stroke-dashoffset: 0;
+      opacity: 1;
+      transition: stroke-dashoffset 0.8s ease-out, opacity 0.1s ease;
+    }
+
+    .card-glow:hover .card-title {
+      color: var(--color-accent);
+      text-shadow: 0 0 8px var(--color-accent);
+    }
+
+    /* ===== 文字发光效果 ===== */
+    .text-glow {
+      text-shadow: 0 0 5px var(--color-accent);
+    }
+
+    .text-glow-strong {
+      text-shadow: 0 0 8px var(--color-accent);
+    }
+
+    .text-glow-extreme {
+      text-shadow: 0 0 12px var(--color-accent), 0 0 20px var(--color-accent);
+    }
+
+    /* ===== 链接动画 ===== */
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .glow-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-muted);
+      text-decoration: none;
+      font-size: 11px;
+      transition: color 0.1s;
+    }
+
+    .glow-link:hover {
+      color: var(--color-fg);
+    }
+
+    .glow-link:hover .link-arrow {
+      text-shadow: 0 0 8px var(--color-accent);
+      animation: arrow-enter 400ms ease-out, arrow-scroll 1s ease-in-out 400ms infinite;
+    }
+
+    .link-arrow {
+      display: inline-block;
+      font-size: 14px;
+      line-height: 1;
+      animation: arrow-exit 400ms ease-out;
+    }
+
+    @keyframes arrow-enter {
+      0% {
+        transform: rotate(0deg) scale(1);
+        text-shadow: 0 0 0 transparent;
+      }
+
+      20% {
+        transform: rotate(72deg) scale(1.1);
+        text-shadow: 0 0 4px var(--color-accent);
+      }
+
+      50% {
+        transform: rotate(180deg) scale(0.85);
+        text-shadow: 0 0 6px var(--color-accent);
+      }
+
+      100% {
+        transform: rotate(360deg) scale(1);
+        text-shadow: 0 0 8px var(--color-accent);
+      }
+    }
+
+    @keyframes arrow-scroll {
+      0% {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+      }
+
+      40% {
+        transform: translateX(8px) rotate(0);
+        opacity: 0;
+      }
+
+      41% {
+        transform: translateX(-6px) rotate(0);
+        opacity: 0;
+      }
+
+      75% {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes arrow-exit {
+      0% {
+        transform: rotate(0deg) scale(1);
+        text-shadow: 0 0 8px var(--color-accent);
+      }
+
+      50% {
+        transform: rotate(180deg) scale(0.85);
+        text-shadow: 0 0 6px var(--color-accent);
+      }
+
+      80% {
+        transform: rotate(360deg) scale(1.1);
+        text-shadow: 0 0 3px var(--color-accent);
+      }
+
+      100% {
+        transform: rotate(360deg) scale(1);
+        text-shadow: 0 0 0 transparent;
+      }
+    }
+
+    /* ===== 分类动画 ===== */
+    .category-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .link-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .category-prefix {
+      color: var(--color-accent);
+      opacity: 0.6;
+      display: inline-block;
+      transition: opacity 200ms ease;
+    }
+
+    .link-group:hover .category-prefix {
+      opacity: 1;
+      text-shadow: 0 0 8px var(--color-accent);
+      animation: prefix-enter 300ms ease-out;
+    }
+
+    @keyframes prefix-enter {
+      0% {
+        transform: scale(1);
+        text-shadow: 0 0 0 transparent;
+      }
+
+      50% {
+        transform: scale(1.3);
+        text-shadow: 0 0 12px var(--color-accent);
+      }
+
+      100% {
+        transform: scale(1);
+        text-shadow: 0 0 8px var(--color-accent);
+      }
+    }
+
+    .category-char {
+      color: var(--color-muted);
+      display: inline-block;
+      transition: color 200ms ease;
+    }
+
+    .link-group:hover .category-char {
+      animation: char-scan 300ms step-end both;
+      animation-delay: calc(var(--char-index) * 40ms);
+    }
+
+    @keyframes char-scan {
+      0% {
+        color: var(--color-muted);
+        text-shadow: none;
+      }
+
+      50% {
+        color: var(--color-accent);
+        text-shadow: 0 0 6px var(--color-accent);
+      }
+
+      100% {
+        color: rgba(255, 255, 255, 0.6);
+        text-shadow: none;
+      }
+    }
+
+    .mini-link {
+      color: var(--color-muted);
+      text-decoration: none;
+      font-size: 11px;
+      padding: 2px 0;
+      transition: color 0.1s;
+    }
+
+    .mini-link:hover {
+      color: var(--color-fg);
+      text-shadow: 0 0 5px var(--color-accent);
+    }
+
+    /* ===== 加载状态 ===== */
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      background: var(--color-hover);
+    }
+
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .loading-text {
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* ===== 错误提示 ===== */
+    .error {
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-accent);
+      background: rgba(136, 192, 208, 0.1);
+    }
+
+    .error-text {
+      font-size: 11px;
+      color: var(--color-accent);
+    }
+
+    /* ===== CRT 效果 ===== */
+    .crt-demo {
+      position: relative;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      padding: var(--spacing-lg);
+      overflow: hidden;
+      min-height: 150px;
+    }
+
+    .crt-demo.theme-crt {
+      text-shadow: 1px 0 0 rgba(255, 0, 0, 0.4), -1px 0 0 rgba(0, 0, 255, 0.4);
+    }
+
+    .crt-curve {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    .crt-scanlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0) 50%,
+          rgba(0, 0, 0, 0.3) 50%,
+          rgba(0, 0, 0, 0.3));
+      background-size: 100% 4px;
+      z-index: 11;
+    }
+
+    .crt-scanlines::after {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: 0;
+      right: 0;
+      height: 15vh;
+      background: linear-gradient(to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.05) 50%,
+          rgba(255, 255, 255, 0));
+      animation: scanline-drop 8s linear infinite;
+    }
+
+    @keyframes scanline-drop {
+      0% {
+        top: -20%;
+      }
+
+      100% {
+        top: 120%;
+      }
+    }
+
+    .crt-noise {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+      background-size: 3px 3px;
+      animation: crt-noise 0.5s infinite linear;
+      z-index: 12;
+    }
+
+    @keyframes crt-noise {
+      0% {
+        transform: translate(0, 0);
+      }
+
+      25% {
+        transform: translate(-3px, 3px);
+      }
+
+      50% {
+        transform: translate(3px, -3px);
+      }
+
+      75% {
+        transform: translate(-3px, -3px);
+      }
+
+      100% {
+        transform: translate(0, 0);
+      }
+    }
+
+    .crt-flicker {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.01);
+      pointer-events: none;
+      animation: crt-flicker 0.1s infinite;
+      z-index: 13;
+    }
+
+    @keyframes crt-flicker {
+      0% {
+        opacity: 0.98;
+      }
+
+      50% {
+        opacity: 1.0;
+      }
+
+      100% {
+        opacity: 0.99;
+      }
+    }
+
+    /* ===== 扫描线动画 ===== */
+    .scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(136, 192, 208, 0.1), transparent);
+      animation: scan 3s linear infinite;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    @keyframes scan {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(500px);
+      }
+    }
+
+    /* ===== 数字时钟 ===== */
+    .digital-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      color: var(--color-accent);
+      text-shadow: 0 0 10px var(--color-accent), 0 0 20px var(--color-accent);
+      letter-spacing: 0.05em;
+      font-style: italic;
+    }
+
+    /* ===== 表格样式 ===== */
+    .kv-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 11px;
+    }
+
+    .kv-row:last-child {
+      border-bottom: none;
+    }
+
+    .kv-key {
+      color: var(--color-muted);
+    }
+
+    .kv-value {
+      color: var(--color-fg);
+      text-align: right;
+      word-break: break-all;
+      max-width: 60%;
+    }
+
+    /* ===== 标签样式 ===== */
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 9px;
+      border: 1px solid var(--color-border);
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-success {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      text-shadow: 0 0 5px var(--color-accent);
+    }
+
+    .tag-warning {
+      border-color: #fabd2f;
+      color: #fabd2f;
+      text-shadow: 0 0 5px #fabd2f;
+    }
+
+    .tag-error {
+      border-color: #ff5555;
+      color: #ff5555;
+      text-shadow: 0 0 5px #ff5555;
+    }
+
+    /* ===== 页脚 ===== */
+    .footer {
+      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .footer-btn {
+      width: 100%;
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 10px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 1px solid var(--color-border);
+      background: transparent;
+      color: var(--color-fg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .footer-btn:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      text-shadow: 0 0 8px var(--color-accent);
+    }
+
+    /* ===== 主题切换器 ===== */
+    .theme-switcher {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+      padding: 8px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      z-index: 100;
+    }
+
+    .theme-btn {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--color-border);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .theme-btn.active {
+      border-color: var(--color-fg);
+      box-shadow: 0 0 8px var(--color-accent);
+    }
+
+    /* ===== Demo Grid ===== */
+    .demo-grid {
+      display: grid;
+      gap: var(--spacing-lg);
+      margin: var(--spacing-lg) 0;
+    }
+
+    .demo-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .demo-section-title {
+      font-size: 12px;
+      color: var(--color-accent);
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-xs);
+      border-bottom: 1px solid var(--color-border);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 480px) {
+      .preview-container {
+        margin: 10px;
+        padding: var(--spacing-sm);
+      }
+    }
+  </style>
+</head>
+
+<body data-theme="nord">
+  <!-- 主题切换器 -->
+  <div class="theme-switcher">
+    <div class="theme-btn" data-theme="darkish" style="background: #0d0d0d;" title="Darkish"></div>
+    <div class="theme-btn active" data-theme="nord" style="background: #2e3440;" title="Nord"></div>
+    <div class="theme-btn" data-theme="dracula" style="background: #282a36;" title="Dracula"></div>
+    <div class="theme-btn" data-theme="cyberpunk" style="background: #000b1e;" title="Cyberpunk"></div>
+    <div class="theme-btn" data-theme="crt" style="background: #050505;" title="CRT"></div>
+    <div class="theme-btn" data-theme="gruvbox" style="background: #282828;" title="Gruvbox"></div>
+  </div>
+
+  <div class="preview-container">
+    <div class="scanline"></div>
+
+    <!-- 头部 -->
+    <header class="header">
+      <div class="header-title">
+        <div class="status-indicator"></div>
+        <h1 class="app-title">GLIM</h1>
+      </div>
+      <div class="url-display">
+        <div class="url-label">当前地址</div>
+        <div class="url-text">https://github.com/TheCSir/TerminalStart</div>
+      </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main>
+      <!-- 加载状态 -->
+      <div class="demo-section">
+        <div class="demo-section-title">加载状态</div>
+        <div class="loading">
+          <div class="loading-dot"></div>
+          <span class="loading-text">正在获取页面信息...</span>
+        </div>
+      </div>
+
+      <!-- 错误提示 -->
+      <div class="demo-section">
+        <div class="demo-section-title">错误提示</div>
+        <div class="error">
+          <span class="error-text">无法获取页面信息</span>
+        </div>
+      </div>
+
+      <!-- 边框发光卡片 -->
+      <div class="demo-section">
+        <div class="demo-section-title">边框发光卡片 (悬停查看效果)</div>
+
+        <!-- 带标题的发光卡片 -->
+        <div class="card card-glow" style="margin-bottom: 12px;" data-has-title>
+          <div class="card-title-bar">
+            <div class="card-title">server.location</div>
+            <div class="card-close">[x]</div>
+          </div>
+          <div class="card-glow-border">
+            <svg>
+              <path></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="kv-row">
+              <span class="kv-key">IP</span>
+              <span class="kv-value">192.168.1.1</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">位置</span>
+              <span class="kv-value">San Francisco, US</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">ISP</span>
+              <span class="kv-value">Cloudflare Inc.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 不同颜色的发光卡片 -->
+        <div class="card card-glow" style="margin-bottom: 12px; --color-accent: #bd93f9;" data-has-title>
+          <div class="card-title-bar">
+            <div class="card-title" style="color: #bd93f9;">page.info</div>
+            <div class="card-close" style="color: #bd93f9;">[x]</div>
+          </div>
+          <div class="card-glow-border">
+            <svg>
+              <path></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="kv-row">
+              <span class="kv-key">标题</span>
+              <span class="kv-value">TerminalStart</span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">描述</span>
+              <span class="kv-value">Terminal Style Start Page</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 赛博朋克风格 -->
+        <div class="card card-glow" style="--color-accent: #ff003c;" data-has-title>
+          <div class="card-title-bar">
+            <div class="card-title" style="color: #ff003c;">security.headers</div>
+            <div class="card-close" style="color: #ff003c;">[x]</div>
+          </div>
+          <div class="card-glow-border">
+            <svg>
+              <path></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="kv-row">
+              <span class="kv-key">Content-Security-Policy</span>
+              <span class="kv-value"><span class="tag tag-success">present</span></span>
+            </div>
+            <div class="kv-row">
+              <span class="kv-key">X-Frame-Options</span>
+              <span class="kv-value"><span class="tag tag-warning">missing</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 文字发光 -->
+      <div class="demo-section">
+        <div class="demo-section-title">文字发光</div>
+        <div style="margin-bottom: 8px;">
+          <span class="text-glow" style="font-size: 14px; color: var(--color-accent);">基础发光 (5px)</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <span class="text-glow-strong" style="font-size: 14px; color: var(--color-accent);">强发光 (8px)</span>
+        </div>
+        <div>
+          <span class="text-glow-extreme" style="font-size: 14px; color: var(--color-accent);">极强发光 (12px + 20px)</span>
+        </div>
+      </div>
+
+      <!-- 链接动画 -->
+      <div class="demo-section">
+        <div class="demo-section-title">链接动画 (悬停查看效果)</div>
+        <div class="card">
+          <div class="link-list">
+            <a href="#" class="glow-link">
+              <span class="link-arrow">›</span>
+              <span>github.com/TheCSir</span>
+            </a>
+            <a href="#" class="glow-link">
+              <span class="link-arrow">›</span>
+              <span>npmjs.com/package</span>
+            </a>
+            <a href="#" class="glow-link">
+              <span class="link-arrow">›</span>
+              <span>stackoverflow.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类动画 -->
+      <div class="demo-section">
+        <div class="demo-section-title">分类动画 (悬停查看效果)</div>
+        <div class="card">
+          <div class="category-group">
+            <div class="link-group">
+              <div class="category-header">
+                <span class="category-prefix">//</span>
+                <span class="category-chars">
+                  <span class="category-char" style="--char-index:0">s</span>
+                  <span class="category-char" style="--char-index:1">e</span>
+                  <span class="category-char" style="--char-index:2">r</span>
+                  <span class="category-char" style="--char-index:3">v</span>
+                  <span class="category-char" style="--char-index:4">e</span>
+                  <span class="category-char" style="--char-index:5">r</span>
+                </span>
+              </div>
+              <a href="#" class="mini-link">→ location.data</a>
+              <a href="#" class="mini-link">→ ip.address</a>
+            </div>
+
+            <div class="link-group">
+              <div class="category-header">
+                <span class="category-prefix">//</span>
+                <span class="category-chars">
+                  <span class="category-char" style="--char-index:0">s</span>
+                  <span class="category-char" style="--char-index:1">e</span>
+                  <span class="category-char" style="--char-index:2">c</span>
+                  <span class="category-char" style="--char-index:3">u</span>
+                  <span class="category-char" style="--char-index:4">r</span>
+                  <span class="category-char" style="--char-index:5">i</span>
+                  <span class="category-char" style="--char-index:6">t</span>
+                  <span class="category-char" style="--char-index:7">y</span>
+                </span>
+              </div>
+              <a href="#" class="mini-link">→ headers.check</a>
+              <a href="#" class="mini-link">→ ssl.tls</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRT 效果 -->
+      <div class="demo-section">
+        <div class="demo-section-title">CRT 复古效果</div>
+        <div class="crt-demo theme-crt" style="--color-accent: #69f0ae;">
+          <div class="crt-curve"></div>
+          <div class="crt-scanlines"></div>
+          <div class="crt-noise"></div>
+          <div class="crt-flicker"></div>
+
+          <div style="position: relative; z-index: 5;">
+            <div class="digital-clock">12:34:56</div>
+            <div style="color: #33ff33; font-size: 11px; margin-top: 8px; opacity: 0.8;">
+              <div>> system online</div>
+              <div>> connection established</div>
+              <div>> _cursor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 标签样式 -->
+      <div class="demo-section">
+        <div class="demo-section-title">标签状态</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="tag">default</span>
+          <span class="tag tag-success">success</span>
+          <span class="tag tag-warning">warning</span>
+          <span class="tag tag-error">error</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- 页脚按钮 -->
+    <footer class="footer">
+      <button class="footer-btn">
+        刷新页面数据
+      </button>
+    </footer>
+  </div>
+
+  <script>
+    // ===== 边框发光动态计算 =====
+    function initGlowBorders() {
+      const widgets = document.querySelectorAll('[data-has-title]');
+
+      widgets.forEach(widget => {
+        const borderContainer = widget.querySelector('.card-glow-border');
+        const svg = borderContainer ? borderContainer.querySelector('svg') : null;
+        const path = borderContainer ? borderContainer.querySelector('path') : null;
+        const titleEl = widget.querySelector('.card-title');
+
+        if (!svg || !path) return;
+
+        const updatePath = () => {
+          const rect = widget.getBoundingClientRect();
+          const w = rect.width;
+          const h = rect.height;
+
+          if (w <= 0 || h <= 0) return;
+
+          svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+
+          const hasTitle = widget.hasAttribute('data-has-title');
+          let titleEnd = 0;
+
+          if (hasTitle && titleEl) {
+            titleEnd = 1 + titleEl.offsetLeft + titleEl.offsetWidth;
+          }
+
+          const startX = hasTitle && titleEnd > 0 ? titleEnd : 0.5;
+          const x1 = startX;
+          const y1 = 0.5;
+          const x2 = w - 0.5;
+          const y2 = h - 0.5;
+
+          let d;
+          if (hasTitle && titleEnd > 0) {
+            d = `M${x1},${y1} L${x2},${y1} L${x2},${y2} L0.5,${y2} L0.5,${y1} L${x1},${y1} Z`;
+          } else {
+            d = `M${x1},${y1} L${x2},${y1} L${x2},${y2} L0.5,${y2} L0.5,${y1} Z`;
+          }
+
+          const perimeter = 2 * (w - 1) + 2 * (h - 1);
+
+          path.setAttribute('d', d);
+          path.style.setProperty('--perimeter', perimeter);
+        };
+
+        setTimeout(updatePath, 0);
+
+        const observer = new ResizeObserver(updatePath);
+        observer.observe(widget);
+      });
+    }
+
+    // ===== 主题切换 =====
+    function initThemeSwitcher() {
+      const themeBtns = document.querySelectorAll('.theme-btn');
+
+      themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const theme = btn.getAttribute('data-theme');
+          if (!theme) return;
+
+          // 更新 body data-theme
+          document.body.setAttribute('data-theme', theme);
+
+          // 更新按钮状态
+          themeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      initGlowBorders();
+      initThemeSwitcher();
+    });
+
+    // 窗口大小变化时重新计算边框
+    window.addEventListener('resize', () => {
+      initGlowBorders();
+    });
+  </script>
+</body>
+
+</html>
