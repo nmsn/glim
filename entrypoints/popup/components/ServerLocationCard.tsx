@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { GlowCard } from './GlowCard';
 import MapChart from './MapChart';
+import { CharScan } from './CharScan';
 import type { ServerLocation } from '@/utils/server-location';
 
 interface IpLocationInfo {
@@ -17,10 +19,16 @@ interface Props {
 }
 
 function InfoRow({ label, value, className = '' }: { label: string; value: string; className?: string }) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className={`flex items-center justify-between gap-[8px] px-[8px] border-b border-[var(--color-border)] hover:bg-[var(--color-hover)] ${className}`}>
+    <div
+      className={`flex items-center justify-between gap-[8px] px-[8px] border-b border-[var(--color-border)] hover:bg-[var(--color-hover)] ${className}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
-        {label}
+        <CharScan text={label} className={isHovered ? 'animate' : ''} />
       </span>
       <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate">
         {value}
@@ -108,14 +116,10 @@ export function ServerLocationCard({
                     value={selectedIp.ip}
                     className="h-[30px]"
                   />
-                  <div className="flex-1 flex flex-col gap-[2px] px-[8px] py-[4px] hover:bg-[var(--color-hover)] min-h-[30px]">
-                    <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">
-                      ISP
-                    </span>
-                    <span className="text-[10px] text-[var(--color-fg)] font-mono break-all">
-                      {selectedIp.location.isp}
-                    </span>
-                  </div>
+                  <InfoRow
+                    label="ISP"
+                    value={selectedIp.location.isp}
+                  />
                 </div>
                 <div className="w-[120px] h-[120px] shrink-0">
                   <MapChart
