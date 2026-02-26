@@ -11,19 +11,19 @@ export function KeyValueRow({ label, value, icon, highlight }: Props) {
       className={`
         flex flex-col gap-[2px]
         p-[6px_8px]
-        [background:var(--bg-primary)]
-        border-b [border-color:var(--border-color)]
+        bg-[var(--color-bg)]
+        border-b border-[var(--color-border)]
         last:border-b-0
         transition-colors
-        hover:bg-yellow/5
-        ${highlight ? 'bg-green/5' : ''}
+        hover:bg-[var(--color-hover)]
+        ${highlight ? 'bg-[var(--color-hover)]' : ''}
       `}
     >
-      <span className="text-[8px] text-gray-medium uppercase tracking-[0.3px]">
+      <span className="text-[8px] text-[var(--color-muted)] uppercase tracking-[0.3px]">
         {icon && <span className="mr-1">{icon}</span>}
         {label}
       </span>
-      <span className="text-[10px] [color:var(--text-primary)] font-['var(--font-mono)'] break-all">
+      <span className="text-[10px] text-[var(--color-fg)] font-mono break-all">
         {value}
       </span>
     </div>

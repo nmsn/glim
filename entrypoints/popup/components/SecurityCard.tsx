@@ -1,4 +1,4 @@
-import { SectionHeader } from './SectionHeader';
+import { GlowCard } from './GlowCard';
 import type { SecurityHeaders } from '@/utils/http-security';
 
 interface Props {
@@ -14,24 +14,23 @@ interface SecurityItem {
 export function SecurityCard({ security, loading }: Props) {
   if (loading && !security) {
     return (
-      <div className="mt-[10px]">
-        <SectionHeader title="安全检测" loading={loading} />
-        <div className="flex flex-col gap-[4px] p-[8px] border [border-color:var(--border-color)] [background:var(--bg-secondary)] opacity-50">
+      <GlowCard title="安全检测" loading={loading}>
+        <div className="flex flex-col gap-[4px]">
           {['Strict-Transport-Security', 'X-Frame-Options', 'X-Content-Type-Options', 'X-XSS-Protection', 'Content-Security-Policy'].map((name) => (
             <div
               key={name}
-              className="flex items-center justify-between p-[6px_8px] border [border-color:var(--border-color)] [background:var(--bg-primary)]"
+              className="flex items-center justify-between p-[6px_8px] border border-[var(--color-border)] bg-[var(--color-hover)]"
             >
-              <span className="text-[10px] text-gray-medium">
+              <span className="text-[10px] text-[var(--color-muted)]">
                 {name}
               </span>
-              <span className="text-[10px] font-['var(--font-mono)'] font-semibold text-gray-medium">
+              <span className="text-[10px] font-mono font-semibold text-[var(--color-muted)]">
                 ...
               </span>
             </div>
           ))}
         </div>
-      </div>
+      </GlowCard>
     );
   }
 
@@ -45,29 +44,24 @@ export function SecurityCard({ security, loading }: Props) {
   ];
 
   return (
-    <div className="mt-[10px]">
-      <SectionHeader title="安全检测" loading={loading} />
-
-      <div className={`flex flex-col gap-[4px] p-[8px] border [border-color:var(--border-color)] [background:var(--bg-secondary)] ${loading ? 'opacity-50' : ''}`}>
+    <GlowCard title="安全检测" loading={loading}>
+      <div className="flex flex-col gap-[4px]">
         {items.map((item) => (
           <div
             key={item.name}
             className={`
               flex items-center justify-between p-[6px_8px]
-              border [border-color:var(--border-color)]
+              border border-[var(--color-border)]
               ${item.enabled
-                ? 'bg-green/10 border-green-dim'
-                : '[background:var(--bg-primary)]'
+                ? 'bg-[var(--color-accent)]/10 border-[var(--color-accent)]/30'
+                : 'bg-[var(--color-hover)]'
               }
             `}
           >
-            <span className="text-[10px] text-gray-medium">
+            <span className="text-[10px] text-[var(--color-muted)]">
               {item.name}
             </span>
-            <span className={`
-              text-[10px] font-['var(--font-mono)'] font-semibold
-              ${item.enabled ? 'text-green' : 'text-yellow'}
-            `}>
+            <span className={`tag ${item.enabled ? 'tag-success' : 'tag-warning'}`}>
               {item.enabled ? 'ON' : 'OFF'}
             </span>
           </div>
@@ -75,24 +69,21 @@ export function SecurityCard({ security, loading }: Props) {
         <div
           className={`
             flex items-center justify-between p-[6px_8px]
-            border [border-color:var(--border-color)]
+            border border-[var(--color-border)]
             ${security.contentSecurityPolicy
-              ? 'bg-green/10 border-green-dim'
-              : '[background:var(--bg-primary)]'
+              ? 'bg-[var(--color-accent)]/10 border-[var(--color-accent)]/30'
+              : 'bg-[var(--color-hover)]'
             }
           `}
         >
-          <span className="text-[10px] text-gray-medium">
+          <span className="text-[10px] text-[var(--color-muted)]">
             Content-Security-Policy
           </span>
-          <span className={`
-            text-[10px] font-['var(--font-mono)'] font-semibold
-            ${security.contentSecurityPolicy ? 'text-green' : 'text-yellow'}
-          `}>
+          <span className={`tag ${security.contentSecurityPolicy ? 'tag-success' : 'tag-warning'}`}>
             {security.contentSecurityPolicy ? 'ON' : 'OFF'}
           </span>
         </div>
       </div>
-    </div>
+    </GlowCard>
   );
 }

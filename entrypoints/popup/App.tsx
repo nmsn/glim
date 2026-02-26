@@ -200,26 +200,26 @@ function App() {
   const isLoading = Object.values(loading).some(v => v);
 
   return (
-    <div className="min-w-[360px] min-h-[600px] [background:var(--bg-primary)] p-[8px] relative font-['var(--font-mono)']">
+    <div className="min-w-[360px] min-h-[600px] bg-[var(--color-bg)] p-[8px] relative font-mono">
       <div className="scanline" />
 
-      <header className="border-b border-yellow pb-[8px] mb-[10px]">
+      <header className="border-b border-[var(--color-border)] pb-[8px] mb-[10px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="status-indicator" />
-            <h1 className="font-[family-name:var(--font-display)] text-[12px] font-semibold text-yellow uppercase tracking-[1px]">
+            <h1 className="font-display text-[12px] font-bold text-[var(--color-accent)] uppercase tracking-[2px] text-glow">
               GLIM
             </h1>
           </div>
         </div>
 
-        <div className="mt-[8px] pl-[10px] border-l-2 border-green">
-          <div className="text-[9px] text-gray-medium uppercase tracking-[0.3px] mb-[2px]">
+        <div className="mt-[8px] pl-[10px] border-l-2 border-[var(--color-accent)]">
+          <div className="text-[10px] text-[var(--color-muted)] uppercase tracking-[0.5px] mb-[2px]">
             当前地址
           </div>
-          <div className="text-[9px] [color:var(--text-primary)] font-['var(--font-mono)'] break-all">
+          <div className="text-[10px] text-[var(--color-fg)] font-mono break-all opacity-80">
             {loading.url ? (
-              <span className="text-gray-medium">加载中...</span>
+              <span className="text-[var(--color-muted)]">加载中...</span>
             ) : (
               currentUrl || '未知'
             )}
@@ -229,8 +229,8 @@ function App() {
 
       <main className="space-y-[10px]">
         {error && (
-          <div className="p-[8px] border border-yellow bg-yellow/10">
-            <span className="text-[10px] text-yellow font-['var(--font-mono)']">
+          <div className="p-[8px] border border-[var(--color-accent)] bg-[var(--color-accent)]/10">
+            <span className="text-[10px] text-[var(--color-accent)] font-mono">
               {error}
             </span>
           </div>
@@ -262,18 +262,18 @@ function App() {
         )}
       </main>
 
-      <footer className="mt-[12px] pt-[8px] border-t border-gray-dark">
+      <footer className="mt-[12px] pt-[8px] border-t border-[var(--color-border)]">
         <button
           onClick={fetchAllData}
           disabled={isLoading}
           className={`
-            w-full p-[8px] text-[9px] font-['var(--font-display)'] uppercase tracking-[0.5px]
+            w-full p-[8px] text-[10px] font-display uppercase tracking-[1px]
             border transition-all cursor-pointer
             ${isLoading
-              ? 'border-gray-dark text-gray-medium cursor-not-allowed'
+              ? 'border-[var(--color-border)] text-[var(--color-muted)] cursor-not-allowed'
               : hasFetched
-                ? 'border-gray-dark text-gray-light hover:border-green hover:text-green'
-                : 'bg-yellow [color:var(--bg-primary)] border-yellow hover:bg-yellow-dim'
+                ? 'border-[var(--color-border)] text-[var(--color-fg)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:text-glow'
+                : 'bg-[var(--color-accent)] text-[var(--color-bg)] border-[var(--color-accent)] hover:bg-transparent hover:text-[var(--color-accent)]'
             }
           `}
         >

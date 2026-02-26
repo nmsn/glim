@@ -1,5 +1,5 @@
 import { KeyValueRow } from './KeyValueRow';
-import { SectionHeader } from './SectionHeader';
+import { GlowCard } from './GlowCard';
 
 interface DataItem {
   label: string;
@@ -17,13 +17,11 @@ interface Props {
   loading?: boolean;
 }
 
-export function KeyValueCard({ title, icon, children, data, variant = 'default', loading }: Props) {
+export function KeyValueCard({ title, children, data, variant = 'default', loading }: Props) {
   return (
-    <div className="mt-[10px]">
-      <SectionHeader title={title} icon={icon} loading={loading} />
-
+    <GlowCard title={title} loading={loading}>
       {variant === 'grid' && data ? (
-        <div className={`grid grid-cols-2 gap-[1px] bg-[var(--border-color)] border [border-color:var(--border-color)] ${loading ? 'opacity-50' : ''}`}>
+        <div className="grid grid-cols-2 gap-[1px] bg-[var(--color-border)]">
           {data.map((item, index) => (
             <KeyValueRow
               key={index}
@@ -35,7 +33,7 @@ export function KeyValueCard({ title, icon, children, data, variant = 'default',
           ))}
         </div>
       ) : (
-        <div className={`flex flex-col gap-0 border [border-color:var(--border-color)] ${loading ? 'opacity-50' : ''}`}>
+        <div className="flex flex-col gap-0">
           {data ? (
             data.map((item, index) => (
               <KeyValueRow
@@ -51,6 +49,6 @@ export function KeyValueCard({ title, icon, children, data, variant = 'default',
           )}
         </div>
       )}
-    </div>
+    </GlowCard>
   );
 }
