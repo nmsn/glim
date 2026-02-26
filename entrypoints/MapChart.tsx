@@ -5,31 +5,28 @@ import {
   Annotation,
 } from 'react-simple-maps';
 
-import colors from './colors';
 import MapFeatures from '@/assets/map-features.json';
 
 interface Props {
-  lat: number,
-  lon: number,
-  label?: string,
-};
+  lat: number;
+  lon: number;
+  label?: string;
+}
 
-const MapChart = (location: Props) => {
-  const { lat, lon, label } = location;
-
+const MapChart = ({ lat, lon, label }: Props) => {
   return (
     <ComposableMap
       projection="geoAzimuthalEqualArea"
       projectionConfig={{
         rotate: [0, 0, 0],
-        center: [lon + 5, lat - 25],  // 地图中心偏移，使标记点在合适位置
+        center: [lon + 5, lat - 25],
         scale: 200
       }}
     >
       <Geographies
-        geography={MapFeatures}  // 使用本地地图数据
-        fill={colors.backgroundDarker}
-        stroke={colors.primary}
+        geography={MapFeatures}
+        fill="var(--color-hover)"
+        stroke="var(--color-muted)"
         strokeWidth={0.5}
       >
         {({ geographies }: any) =>
@@ -39,16 +36,16 @@ const MapChart = (location: Props) => {
         }
       </Geographies>
       <Annotation
-        subject={[lon, lat]}  // 服务器位置标记
+        subject={[lon, lat]}
         dx={-80}
         dy={-80}
         connectorProps={{
-          stroke: colors.textColor,
-          strokeWidth: 3,
+          stroke: "var(--color-accent)",
+          strokeWidth: 2,
           strokeLinecap: "round"
         }}
       >
-        <text x="-8" textAnchor="end" fill={colors.textColor} fontSize={25}>
+        <text x="-8" textAnchor="end" fill="var(--color-accent)" fontSize={20} fontWeight="bold">
           {label || "Server"}
         </text>
       </Annotation>
