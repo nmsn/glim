@@ -213,17 +213,17 @@ function App() {
           </div>
         </div>
 
-        <div className="mt-[8px] pl-[10px] border-l-2 border-[var(--color-accent)]">
-          <div className="text-[10px] text-[var(--color-muted)] uppercase tracking-[0.5px] mb-[2px]">
+        <div className="mt-[8px] flex items-center justify-between gap-[8px] px-[8px] py-[4px] border-l-2 border-[var(--color-accent)]">
+          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
             当前地址
-          </div>
-          <div className="text-[10px] text-[var(--color-fg)] font-mono break-all opacity-80">
+          </span>
+          <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate max-w-[260px]">
             {loading.url ? (
               <span className="text-[var(--color-muted)]">加载中...</span>
             ) : (
               currentUrl || '未知'
             )}
-          </div>
+          </span>
         </div>
       </header>
 

@@ -20,7 +20,7 @@ const MapChart = ({ lat, lon, label }: Props) => {
       projectionConfig={{
         rotate: [0, 0, 0],
         center: [lon + 5, lat - 25],
-        scale: 200
+        scale: 120
       }}
     >
       <Geographies
@@ -37,15 +37,15 @@ const MapChart = ({ lat, lon, label }: Props) => {
       </Geographies>
       <Annotation
         subject={[lon, lat]}
-        dx={-80}
-        dy={-80}
+        dx={-30}
+        dy={-30}
         connectorProps={{
           stroke: "var(--color-accent)",
-          strokeWidth: 2,
+          strokeWidth: 1.5,
           strokeLinecap: "round"
         }}
       >
-        <text x="-8" textAnchor="end" fill="var(--color-accent)" fontSize={20} fontWeight="bold">
+        <text x="-4" textAnchor="end" fill="var(--color-accent)" fontSize={28} fontWeight="bold" style={{ textShadow: '0 0 4px var(--color-accent)' }}>
           {label || "Server"}
         </text>
       </Annotation>

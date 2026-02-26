@@ -1,5 +1,4 @@
 import { GlowCard } from './GlowCard';
-import { KeyValueRow } from './KeyValueRow';
 import MapChart from './MapChart';
 import type { ServerLocation } from '@/utils/server-location';
 
@@ -17,6 +16,19 @@ interface Props {
   loading?: boolean;
 }
 
+function InfoRow({ label, value, className = '' }: { label: string; value: string; className?: string }) {
+  return (
+    <div className={`flex items-center justify-between gap-[8px] px-[8px] border-b border-[var(--color-border)] hover:bg-[var(--color-hover)] ${className}`}>
+      <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
+        {label}
+      </span>
+      <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate">
+        {value}
+      </span>
+    </div>
+  );
+}
+
 export function ServerLocationCard({
   ipLocations,
   selectedIpIndex,
@@ -28,8 +40,8 @@ export function ServerLocationCard({
   if (loading && ipLocations.length === 0) {
     return (
       <GlowCard title="服务器位置" loading={loading}>
-        <div className="flex items-center gap-2 p-[8px]">
-          <div className="w-[8px] h-[8px] bg-[var(--color-accent)] animate-pulse" />
+        <div className="flex items-center justify-between gap-[8px] p-[4px_8px]">
+          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">状态</span>
           <span className="text-[10px] text-[var(--color-muted)]">正在获取服务器位置...</span>
         </div>
       </GlowCard>
@@ -42,13 +54,13 @@ export function ServerLocationCard({
     <GlowCard title="服务器位置" loading={loading}>
       <>
         {ipLocations.length > 1 && (
-          <div className="flex gap-[6px] mb-[8px] flex-wrap">
+          <div className="flex gap-[6px] mb-[4px] flex-wrap">
             {ipLocations.map((ipInfo, index) => (
               <button
                 key={index}
                 onClick={() => onSelectIp(index)}
                 className={`
-                  px-[8px] py-[4px] text-[9px] cursor-pointer transition-all font-mono
+                  px-[6px] py-[2px] text-[9px] cursor-pointer transition-all font-mono
                   border border-[var(--color-border)]
                   ${selectedIpIndex === index
                     ? 'bg-[var(--color-accent)] text-[var(--color-bg)] border-[var(--color-accent)]'
@@ -65,39 +77,47 @@ export function ServerLocationCard({
         {selectedIp && (
           <div className="border border-[var(--color-border)]">
             {selectedIp.loading && (
-              <div className="p-[8px] text-[10px] text-[var(--color-muted)]">
-                正在获取位置信息...
+              <div className="flex items-center justify-between gap-[8px] p-[4px_8px]">
+                <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">状态</span>
+                <span className="text-[10px] text-[var(--color-muted)]">正在获取位置信息...</span>
               </div>
             )}
 
             {selectedIp.error && (
-              <div className="p-[8px] text-[10px] text-[var(--color-accent)]">
-                错误: {selectedIp.error}
+              <div className="flex items-center justify-between gap-[8px] p-[4px_8px]">
+                <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">错误</span>
+                <span className="text-[10px] text-[var(--color-accent)]">{selectedIp.error}</span>
               </div>
             )}
 
             {selectedIp.location && (
-              <div className="grid grid-cols-[100px_1fr] gap-[1px] bg-[var(--color-border)]">
-                <div className="bg-[var(--color-bg)]">
-                  <KeyValueRow
+              <div className="flex">
+                <div className="flex-1 flex flex-col border-r border-[var(--color-border)]">
+                  <InfoRow
                     label="位置"
                     value={`${selectedIp.location.city}, ${selectedIp.location.country}`}
+                    className="h-[30px]"
                   />
-                  <KeyValueRow
+                  <InfoRow
                     label="坐标"
                     value={`${selectedIp.location.coords.lat.toFixed(4)}, ${selectedIp.location.coords.lon.toFixed(4)}`}
+                    className="h-[30px]"
                   />
-                  <KeyValueRow
-                    label="ISP"
-                    value={selectedIp.location.isp}
-                  />
-                  <KeyValueRow
+                  <InfoRow
                     label="IP"
                     value={selectedIp.ip}
+                    className="h-[30px]"
                   />
+                  <div className="flex-1 flex flex-col gap-[2px] px-[8px] py-[4px] hover:bg-[var(--color-hover)] min-h-[30px]">
+                    <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">
+                      ISP
+                    </span>
+                    <span className="text-[10px] text-[var(--color-fg)] font-mono break-all">
+                      {selectedIp.location.isp}
+                    </span>
+                  </div>
                 </div>
-
-                <div className="bg-[var(--color-bg)] min-h-[100px]">
+                <div className="w-[120px] h-[120px] shrink-0">
                   <MapChart
                     lat={selectedIp.location.coords.lat}
                     lon={selectedIp.location.coords.lon}
