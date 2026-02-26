@@ -18,19 +18,19 @@ interface Props {
   loading?: boolean;
 }
 
-function InfoRow({ label, value, className = '' }: { label: string; value: string; className?: string }) {
+function InfoRow({ label, value, className = '', wrap = false, alignTop = false }: { label: string; value: string; className?: string; wrap?: boolean; alignTop?: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
-      className={`flex items-center justify-between gap-[8px] px-[8px] border-b border-[var(--color-border)] hover:bg-[var(--color-hover)] ${className}`}
+      className={`flex ${alignTop ? 'items-start' : 'items-center'} justify-between gap-[8px] px-[8px] border-b border-[var(--color-border)] hover:bg-[var(--color-hover)] ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
+      <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0 pt-[2px]">
         <CharScan text={label} className={isHovered ? 'animate' : ''} />
       </span>
-      <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate">
+      <span className={`text-[10px] text-[var(--color-fg)] font-mono text-right ${wrap ? 'break-all' : 'truncate'}`}>
         {value}
       </span>
     </div>
@@ -104,21 +104,24 @@ export function ServerLocationCard({
                   <InfoRow
                     label="位置"
                     value={`${selectedIp.location.city}, ${selectedIp.location.country}`}
-                    className="h-[30px]"
+                    className="h-[24px]"
                   />
                   <InfoRow
                     label="坐标"
                     value={`${selectedIp.location.coords.lat.toFixed(4)}, ${selectedIp.location.coords.lon.toFixed(4)}`}
-                    className="h-[30px]"
+                    className="h-[24px]"
                   />
                   <InfoRow
                     label="IP"
                     value={selectedIp.ip}
-                    className="h-[30px]"
+                    className="h-[24px]"
                   />
                   <InfoRow
                     label="ISP"
                     value={selectedIp.location.isp}
+                    wrap={true}
+                    alignTop={true}
+                    className="flex-1 pt-[4px]"
                   />
                 </div>
                 <div className="w-[120px] h-[120px] shrink-0">
