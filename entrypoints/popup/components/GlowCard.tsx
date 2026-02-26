@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { GlitchText } from './GlitchText';
 
 interface GlowCardProps {
   title: string;
@@ -11,6 +12,7 @@ export function GlowCard({ title, children, className = '', loading }: GlowCardP
   const cardRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const [pathData, setPathData] = useState({ d: '', perimeter: 0, width: 0, height: 0 });
+  const [isHovering, setIsHovering] = useState(false);
 
   const calculatePath = useCallback(() => {
     if (!cardRef.current) return;
@@ -59,15 +61,30 @@ export function GlowCard({ title, children, className = '', loading }: GlowCardP
     };
   }, [calculatePath]);
 
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
   return (
     <div
       ref={cardRef}
       className={`widget-glow bg-[var(--color-bg)] border border-[var(--color-border)] mt-[10px] ${loading ? 'opacity-50' : ''} ${className}`}
       style={{ '--perimeter': pathData.perimeter } as React.CSSProperties}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="widget-title-bar">
         <div ref={titleRef} className="widget-title">
-          {title}
+          <GlitchText
+            text={title}
+            autoPlay={false}
+            onHover={false}
+            externalTrigger={isHovering}
+          />
         </div>
       </div>
 

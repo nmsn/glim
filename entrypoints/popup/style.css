@@ -252,7 +252,6 @@ html, body {
 
 .widget-glow:hover {
   border-color: var(--color-accent);
-  box-shadow: 0 0 8px var(--color-accent), inset 0 0 8px rgba(255, 255, 255, 0.05);
 }
 
 .widget-content {
