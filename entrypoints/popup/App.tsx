@@ -200,7 +200,7 @@ function App() {
   const isLoading = Object.values(loading).some(v => v);
 
   return (
-    <div className="min-w-[360px] min-h-[600px] bg-[var(--color-bg)] p-[8px] relative font-mono">
+    <div className="min-w-[360px] min-h-[800px] bg-[var(--color-bg)] p-[8px] relative font-mono">
       <div className="scanline" />
 
       <header className="border-b border-[var(--color-border)] pb-[8px] mb-[10px]">

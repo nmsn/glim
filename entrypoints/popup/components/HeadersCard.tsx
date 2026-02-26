@@ -21,7 +21,7 @@ export function HeadersCard({ headers, loading }: Props) {
 
   return (
     <GlowCard title="响应 Headers" loading={loading}>
-      <div className="max-h-[200px] overflow-auto">
+      <div className="">
         {Object.entries(headers).map(([key, value], index) => (
           <div
             key={key}
