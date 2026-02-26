@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { CharScan } from './CharScan';
+
 interface Props {
   label: string;
   value: React.ReactNode;
@@ -6,6 +9,8 @@ interface Props {
 }
 
 export function KeyValueRow({ label, value, icon, highlight }: Props) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <div
       className={`
@@ -18,10 +23,12 @@ export function KeyValueRow({ label, value, icon, highlight }: Props) {
         hover:bg-[var(--color-hover)]
         ${highlight ? 'bg-[var(--color-hover)]' : ''}
       `}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
         {icon && <span className="mr-1">{icon}</span>}
-        {label}
+        <CharScan text={label} className={isHovered ? 'animate' : ''} />
       </span>
       <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate">
         {value}

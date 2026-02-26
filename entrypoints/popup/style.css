@@ -379,3 +379,35 @@ a:hover .link-arrow {
   letter-spacing: 0.05em;
   font-style: italic;
 }
+
+.char-scan-container {
+  display: inline-block;
+}
+
+.char-scan-item {
+  display: inline-block;
+  color: var(--color-muted);
+  transition: color 200ms ease;
+}
+
+.char-scan-item.animate {
+  animation: char-scan 300ms step-end both;
+  animation-delay: calc(var(--char-index) * 40ms);
+}
+
+@keyframes char-scan {
+  0% {
+    color: var(--color-muted);
+    text-shadow: none;
+  }
+
+  50% {
+    color: var(--color-accent);
+    text-shadow: 0 0 6px var(--color-accent);
+  }
+
+  100% {
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: none;
+  }
+}
