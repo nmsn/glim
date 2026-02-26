@@ -1,6 +1,11 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
 const SCRAMBLE_CHARS = '!@#$%^&*_+-=[]{}|;:<>?/~';
+const SCRAMBLE_CHARS_CN = '天地玄黄宇宙洪荒日月盈昃辰宿列张寒来暑往秋收冬藏';
+
+function isAllChinese(text: string): boolean {
+  return /^[\u4e00-\u9fa5]+$/.test(text);
+}
 
 interface ScrambleTextProps {
   text: string;
@@ -34,6 +39,7 @@ export const ScrambleText: React.FC<ScrambleTextProps> = ({
   const scramble = useCallback(() => {
     let tick = 0;
     const maxTicks = text.length;
+    const chars = isAllChinese(text) ? SCRAMBLE_CHARS_CN : SCRAMBLE_CHARS;
     const run = () => {
       if (((!onHover || !isHovering.current) && !autoPlay && !externalTrigger) || tick >= maxTicks) {
         setDisplayText(text);
@@ -43,7 +49,7 @@ export const ScrambleText: React.FC<ScrambleTextProps> = ({
       tick++;
       setDisplayText(
         text.split('').map((ch, i) =>
-          i < tick ? ch : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+          i < tick ? ch : chars[Math.floor(Math.random() * chars.length)]
         ).join('')
       );
       scrambleTimer.current = setTimeout(run, 40);
