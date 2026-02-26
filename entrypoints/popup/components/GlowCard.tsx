@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { GlitchText } from './GlitchText';
+import { ScrambleText } from './ScrambleText';
 
 interface GlowCardProps {
   title: string;
@@ -79,7 +79,7 @@ export function GlowCard({ title, children, className = '', loading }: GlowCardP
     >
       <div className="widget-title-bar">
         <div ref={titleRef} className="widget-title">
-          <GlitchText
+          <ScrambleText
             text={title}
             autoPlay={false}
             onHover={false}

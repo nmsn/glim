@@ -12,7 +12,7 @@ import { PageInfoCard } from './components/PageInfoCard';
 import { SocialTagsCard } from './components/SocialTagsCard';
 import { SecurityCard } from './components/SecurityCard';
 import { HeadersCard } from './components/HeadersCard';
-import { GlitchText } from './components/GlitchText';
+import { ScrambleText } from './components/ScrambleText';
 import './style.css';
 
 interface IpLocationInfo {
@@ -208,7 +208,7 @@ function App() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="status-indicator" />
-            <GlitchText
+            <ScrambleText
               text="GLIM"
               autoPlay={true}
               onHover={true}

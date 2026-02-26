@@ -1,29 +1,29 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
-const GLITCH_CHARS = '!@#$%^&*_+-=[]{}|;:<>?/~';
+const SCRAMBLE_CHARS = '!@#$%^&*_+-=[]{}|;:<>?/~';
 
-interface GlitchTextProps {
+interface ScrambleTextProps {
   text: string;
   className?: string;
   onHover?: boolean;
   autoPlay?: boolean;
   externalTrigger?: boolean;
-  onGlitchStart?: () => void;
-  onGlitchEnd?: () => void;
+  onScrambleStart?: () => void;
+  onScrambleEnd?: () => void;
 }
 
-export const GlitchText: React.FC<GlitchTextProps> = ({
+export const ScrambleText: React.FC<ScrambleTextProps> = ({
   text,
   className = '',
   onHover = true,
   autoPlay = false,
   externalTrigger = false,
-  onGlitchStart,
-  onGlitchEnd
+  onScrambleStart,
+  onScrambleEnd
 }) => {
   const [displayText, setDisplayText] = useState(text);
   const isHovering = useRef(false);
-  const glitchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrambleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasPlayedOnce = useRef(false);
   const prevExternalTrigger = useRef(false);
 
@@ -37,49 +37,49 @@ export const GlitchText: React.FC<GlitchTextProps> = ({
     const run = () => {
       if (((!onHover || !isHovering.current) && !autoPlay && !externalTrigger) || tick >= maxTicks) {
         setDisplayText(text);
-        onGlitchEnd?.();
+        onScrambleEnd?.();
         return;
       }
       tick++;
       setDisplayText(
         text.split('').map((ch, i) =>
-          i < tick ? ch : GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+          i < tick ? ch : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
         ).join('')
       );
-      glitchTimer.current = setTimeout(run, 40);
+      scrambleTimer.current = setTimeout(run, 40);
     };
     run();
-  }, [text, onGlitchEnd, onHover, autoPlay, externalTrigger]);
+  }, [text, onScrambleEnd, onHover, autoPlay, externalTrigger]);
 
   useEffect(() => {
     if (autoPlay && !hasPlayedOnce.current) {
       hasPlayedOnce.current = true;
-      onGlitchStart?.();
+      onScrambleStart?.();
       scramble();
     }
-  }, [autoPlay, scramble, onGlitchStart]);
+  }, [autoPlay, scramble, onScrambleStart]);
 
   useEffect(() => {
     if (externalTrigger && !prevExternalTrigger.current) {
-      onGlitchStart?.();
+      onScrambleStart?.();
       scramble();
     }
     prevExternalTrigger.current = externalTrigger;
-  }, [externalTrigger, scramble, onGlitchStart]);
+  }, [externalTrigger, scramble, onScrambleStart]);
 
   const handleEnter = () => {
     if (!onHover) return;
     isHovering.current = true;
-    onGlitchStart?.();
+    onScrambleStart?.();
     scramble();
   };
 
   const handleLeave = () => {
     if (!onHover) return;
     isHovering.current = false;
-    if (glitchTimer.current) clearTimeout(glitchTimer.current);
+    if (scrambleTimer.current) clearTimeout(scrambleTimer.current);
     setDisplayText(text);
-    onGlitchEnd?.();
+    onScrambleEnd?.();
   };
 
   return (
