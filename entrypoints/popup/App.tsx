@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Globe } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
@@ -33,7 +34,7 @@ interface LoadingState {
 }
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [headers, setHeaders] = useState<Record<string, string> | null>(null);
@@ -217,6 +218,18 @@ function App() {
               className="font-display text-[12px] font-bold text-[var(--color-accent)] uppercase tracking-[2px] text-glow cursor-pointer"
             />
           </div>
+          <button
+            onClick={() => {
+              const newLang = i18n.language === 'zh-CN' ? 'en' : 'zh-CN';
+              i18n.changeLanguage(newLang);
+              localStorage.setItem('glim-language', newLang);
+            }}
+            className="flex items-center gap-1 px-[6px] py-[2px] text-[9px] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all cursor-pointer"
+            title={i18n.language === 'zh-CN' ? 'Switch to English' : '切换到中文'}
+          >
+            <Globe className="w-[10px] h-[10px]" />
+            <span>{i18n.language === 'zh-CN' ? 'EN' : '中文'}</span>
+          </button>
         </div>
 
         <div className="mt-[8px] flex items-center justify-between gap-[8px] px-[8px] py-[4px] border-l-2 border-[var(--color-accent)]">

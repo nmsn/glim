@@ -13,15 +13,46 @@ const resources = {
   },
 };
 
-const savedLanguage = typeof localStorage !== 'undefined'
-  ? localStorage.getItem('glim-language')
-  : null;
+const SUPPORTED_LANGUAGES = ['en', 'zh-CN'];
+
+function getBrowserLanguage(): string {
+  if (typeof navigator === 'undefined') return 'en';
+  
+  const browserLang = navigator.language || (navigator as any).userLanguage;
+  
+  if (!browserLang) return 'en';
+  
+  if (SUPPORTED_LANGUAGES.includes(browserLang)) {
+    return browserLang;
+  }
+  
+  const baseLang = browserLang.split('-')[0];
+  if (baseLang === 'zh') {
+    return 'zh-CN';
+  }
+  if (baseLang === 'en') {
+    return 'en';
+  }
+  
+  return 'en';
+}
+
+function getDefaultLanguage(): string {
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('glim-language');
+    if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
+      return saved;
+    }
+  }
+  
+  return getBrowserLanguage();
+}
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: savedLanguage || 'zh-CN',
+    lng: getDefaultLanguage(),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false,
