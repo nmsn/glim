@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { KeyValueCard } from './KeyValueCard';
 import type { PageInfo } from '@/utils/page-info';
 
@@ -7,16 +8,17 @@ interface Props {
 }
 
 export function PageInfoCard({ pageInfo, loading }: Props) {
+  const { t } = useTranslation();
+
   if (loading && !pageInfo) {
     return (
       <KeyValueCard
-        title="基础信息"
+        title={t('pageInfo.title')}
         data={[
-          { label: '标题', value: '...' },
-          { label: '来源', value: '...' },
+          { label: t('pageInfo.title_label'), value: '...' },
+          { label: 'URL', value: '...' },
           { label: 'Content-Type', value: '...' },
-          { label: '字符编码', value: '...' },
-          { label: 'HTML 长度', value: '...' },
+          { label: t('pageInfo.charset') || 'Charset', value: '...' },
         ]}
         loading={true}
       />
@@ -27,13 +29,12 @@ export function PageInfoCard({ pageInfo, loading }: Props) {
 
   return (
     <KeyValueCard
-      title="基础信息"
+      title={t('pageInfo.title')}
       data={[
-        { label: '标题', value: pageInfo.title || '(无标题)' },
-        { label: '来源', value: pageInfo.referrer || '(无)' },
-        { label: 'Content-Type', value: pageInfo.contentType || '(无)' },
-        { label: '字符编码', value: pageInfo.charset || '(无)' },
-        { label: 'HTML 长度', value: `${pageInfo.html.length} 字符` },
+        { label: t('pageInfo.title_label'), value: pageInfo.title || `(${t('pageInfo.notFound')})` },
+        { label: 'URL', value: pageInfo.url || `(${t('pageInfo.notFound')})` },
+        { label: 'Content-Type', value: pageInfo.contentType || `(${t('pageInfo.notFound')})` },
+        { label: t('pageInfo.charset') || 'Charset', value: pageInfo.charset || `(${t('pageInfo.notFound')})` },
       ]}
       loading={loading}
     />

@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "GLIM",
+    "currentUrl": "Current URL",
+    "loading": "Loading...",
+    "unknown": "Unknown",
+    "fetching": "Fetching...",
+    "fetchAgain": "Fetch Again",
+    "fetchCurrent": "Fetch Current Page Info"
+  },
+  "serverLocation": {
+    "title": "Server Location",
+    "ip": "IP",
+    "location": "Location",
+    "coordinates": "Coordinates",
+    "isp": "ISP",
+    "notFound": "Not found",
+    "fetchError": "Failed to fetch location"
+  },
+  "pageInfo": {
+    "title": "Basic Info",
+    "title_label": "Title",
+    "description": "Description",
+    "keywords": "Keywords",
+    "robots": "Robots",
+    "canonical": "Canonical",
+    "generator": "Generator",
+    "author": "Author",
+    "charset": "Charset",
+    "notFound": "Not found"
+  },
+  "socialTags": {
+    "title": "Social Tags",
+    "ogTitle": "OG Title",
+    "ogImage": "OG Image",
+    "twitterCard": "Twitter Card",
+    "notFound": "Not found"
+  },
+  "security": {
+    "title": "Security Headers",
+    "strictTransportSecurity": "Strict-Transport-Security",
+    "contentSecurityPolicy": "Content-Security-Policy",
+    "xFrameOptions": "X-Frame-Options",
+    "xContentTypeOptions": "X-Content-Type-Options",
+    "xXssProtection": "X-XSS-Protection",
+    "referrerPolicy": "Referrer-Policy",
+    "permissionsPolicy": "Permissions-Policy",
+    "present": "Present",
+    "missing": "Missing",
+    "secure": "Secure",
+    "insecure": "Insecure"
+  },
+  "headers": {
+    "title": "Response Headers",
+    "noHeaders": "No headers found"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "GLIM",
+    "currentUrl": "当前地址",
+    "loading": "加载中...",
+    "unknown": "未知",
+    "fetching": "获取中...",
+    "fetchAgain": "再次获取",
+    "fetchCurrent": "获取当前页面信息"
+  },
+  "serverLocation": {
+    "title": "服务器位置",
+    "ip": "IP",
+    "location": "位置",
+    "coordinates": "坐标",
+    "isp": "ISP",
+    "notFound": "未找到",
+    "fetchError": "获取位置信息失败"
+  },
+  "pageInfo": {
+    "title": "基本信息",
+    "title_label": "标题",
+    "description": "描述",
+    "keywords": "关键词",
+    "robots": "Robots",
+    "canonical": "Canonical",
+    "generator": "生成器",
+    "author": "作者",
+    "charset": "字符编码",
+    "notFound": "未找到"
+  },
+  "socialTags": {
+    "title": "社交标签",
+    "ogTitle": "OG 标题",
+    "ogImage": "OG 图片",
+    "twitterCard": "Twitter Card",
+    "notFound": "未找到"
+  },
+  "security": {
+    "title": "安全头信息",
+    "strictTransportSecurity": "Strict-Transport-Security",
+    "contentSecurityPolicy": "Content-Security-Policy",
+    "xFrameOptions": "X-Frame-Options",
+    "xContentTypeOptions": "X-Content-Type-Options",
+    "xXssProtection": "X-XSS-Protection",
+    "referrerPolicy": "Referrer-Policy",
+    "permissionsPolicy": "Permissions-Policy",
+    "present": "已设置",
+    "missing": "未设置",
+    "secure": "安全",
+    "insecure": "不安全"
+  },
+  "headers": {
+    "title": "响应头信息",
+    "noHeaders": "未找到响应头"
+  }
+}

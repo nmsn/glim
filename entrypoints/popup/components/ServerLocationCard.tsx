@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GlowCard } from './GlowCard';
 import MapChart from './MapChart';
 import { CharScan } from './CharScan';
@@ -43,11 +44,12 @@ export function ServerLocationCard({
   onSelectIp,
   loading,
 }: Props) {
+  const { t } = useTranslation();
   const selectedIp = ipLocations[selectedIpIndex];
 
   if (loading && ipLocations.length === 0) {
     return (
-      <GlowCard title="服务器位置" loading={loading}>
+      <GlowCard title={t('serverLocation.title')} loading={loading}>
         <div className="flex items-center justify-between gap-[8px] p-[4px_8px]">
           <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">状态</span>
           <span className="text-[10px] text-[var(--color-muted)]">正在获取服务器位置...</span>
@@ -59,7 +61,7 @@ export function ServerLocationCard({
   if (ipLocations.length === 0) return null;
 
   return (
-    <GlowCard title="服务器位置" loading={loading}>
+    <GlowCard title={t('serverLocation.title')} loading={loading}>
       <>
         {ipLocations.length > 1 && (
           <div className="flex gap-[6px] mb-[4px] flex-wrap">
@@ -102,22 +104,22 @@ export function ServerLocationCard({
               <div className="flex">
                 <div className="flex-1 flex flex-col border-r border-[var(--color-border)]">
                   <InfoRow
-                    label="位置"
+                    label={t('serverLocation.location')}
                     value={`${selectedIp.location.city}, ${selectedIp.location.country}`}
                     className="h-[24px]"
                   />
                   <InfoRow
-                    label="坐标"
+                    label={t('serverLocation.coordinates')}
                     value={`${selectedIp.location.coords.lat.toFixed(4)}, ${selectedIp.location.coords.lon.toFixed(4)}`}
                     className="h-[24px]"
                   />
                   <InfoRow
-                    label="IP"
+                    label={t('serverLocation.ip')}
                     value={selectedIp.ip}
                     className="h-[24px]"
                   />
                   <InfoRow
-                    label="ISP"
+                    label={t('serverLocation.isp')}
                     value={selectedIp.location.isp}
                     wrap={true}
                     alignTop={true}

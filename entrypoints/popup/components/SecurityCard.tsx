@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { GlowCard } from './GlowCard';
 import type { SecurityHeaders } from '@/utils/http-security';
 
@@ -12,9 +13,11 @@ interface SecurityItem {
 }
 
 export function SecurityCard({ security, loading }: Props) {
+  const { t } = useTranslation();
+
   if (loading && !security) {
     return (
-      <GlowCard title="安全检测" loading={loading}>
+      <GlowCard title={t('security.title')} loading={loading}>
         <div className="flex flex-col gap-[4px]">
           {['Strict-Transport-Security', 'X-Frame-Options', 'X-Content-Type-Options', 'X-XSS-Protection', 'Content-Security-Policy'].map((name) => (
             <div
@@ -37,14 +40,14 @@ export function SecurityCard({ security, loading }: Props) {
   if (!security) return null;
 
   const items: SecurityItem[] = [
-    { enabled: security.strictTransportPolicy, name: 'Strict-Transport-Security' },
-    { enabled: security.xFrameOptions, name: 'X-Frame-Options' },
-    { enabled: security.xContentTypeOptions, name: 'X-Content-Type-Options' },
-    { enabled: security.xXSSProtection, name: 'X-XSS-Protection' },
+    { enabled: security.strictTransportPolicy, name: t('security.strictTransportSecurity') },
+    { enabled: security.xFrameOptions, name: t('security.xFrameOptions') },
+    { enabled: security.xContentTypeOptions, name: t('security.xContentTypeOptions') },
+    { enabled: security.xXSSProtection, name: t('security.xXssProtection') },
   ];
 
   return (
-    <GlowCard title="安全检测" loading={loading}>
+    <GlowCard title={t('security.title')} loading={loading}>
       <div className="flex flex-col gap-[4px]">
         {items.map((item) => (
           <div
@@ -77,7 +80,7 @@ export function SecurityCard({ security, loading }: Props) {
           `}
         >
           <span className="text-[10px] text-[var(--color-muted)]">
-            Content-Security-Policy
+            {t('security.contentSecurityPolicy')}
           </span>
           <span className={`tag ${security.contentSecurityPolicy ? 'tag-success' : 'tag-warning'}`}>
             {security.contentSecurityPolicy ? 'ON' : 'OFF'}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
@@ -32,6 +33,7 @@ interface LoadingState {
 }
 
 function App() {
+  const { t } = useTranslation();
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [headers, setHeaders] = useState<Record<string, string> | null>(null);
@@ -219,13 +221,13 @@ function App() {
 
         <div className="mt-[8px] flex items-center justify-between gap-[8px] px-[8px] py-[4px] border-l-2 border-[var(--color-accent)]">
           <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
-            当前地址
+            {t('app.currentUrl')}
           </span>
           <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate max-w-[260px]">
             {loading.url ? (
-              <span className="text-[var(--color-muted)]">加载中...</span>
+              <span className="text-[var(--color-muted)]">{t('app.loading')}</span>
             ) : (
-              currentUrl || '未知'
+              currentUrl || t('app.unknown')
             )}
           </span>
         </div>
@@ -281,7 +283,7 @@ function App() {
             }
           `}
         >
-          {isLoading ? '获取中...' : hasFetched ? '再次获取' : '获取当前页面信息'}
+          {isLoading ? t('app.fetching') : hasFetched ? t('app.fetchAgain') : t('app.fetchCurrent')}
         </button>
       </footer>
     </div>

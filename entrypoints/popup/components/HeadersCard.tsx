@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { GlowCard } from './GlowCard';
 
 interface Props {
@@ -6,9 +7,11 @@ interface Props {
 }
 
 export function HeadersCard({ headers, loading }: Props) {
+  const { t } = useTranslation();
+
   if (loading && !headers) {
     return (
-      <GlowCard title="响应 Headers" loading={loading}>
+      <GlowCard title={t('headers.title')} loading={loading}>
         <div className="flex items-center gap-2 p-[8px]">
           <div className="w-[8px] h-[8px] bg-[var(--color-accent)] animate-pulse" />
           <span className="text-[10px] text-[var(--color-muted)]">正在获取 Headers...</span>
@@ -20,7 +23,7 @@ export function HeadersCard({ headers, loading }: Props) {
   if (!headers) return null;
 
   return (
-    <GlowCard title="响应 Headers" loading={loading}>
+    <GlowCard title={t('headers.title')} loading={loading}>
       <div className="">
         {Object.entries(headers).map(([key, value], index) => (
           <div

@@ -5,4 +5,6 @@ export { PageInfoCard } from './PageInfoCard';
 export { SocialTagsCard } from './SocialTagsCard';
 export { SecurityCard } from './SecurityCard';
 export { HeadersCard } from './HeadersCard';
-export { SectionHeader } from './SectionHeader';
+export { GlowCard } from './GlowCard';
+export { ScrambleText } from './ScrambleText';
+export { CharScan } from './CharScan';
