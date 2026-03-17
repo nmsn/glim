@@ -10,7 +10,7 @@
   --color-fg: #e0e0e0;
   --color-muted: #777777;
   --color-border: #333333;
-  --color-accent: #ffffff;
+  --color-accent: #88c0d0;
   --color-hover: #222222;
 
   --widget-radius: 0px;
@@ -23,6 +23,26 @@
 
   --max-width: 360px;
   --min-height: 800px;
+}
+
+:root.light-theme {
+  --color-bg: #f8f8f8;
+  --color-fg: #1a1a1a;
+  --color-muted: #666666;
+  --color-border: #d0d0d0;
+  --color-accent: #4a7a8c;
+  --color-hover: #e8e8e8;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.dark-theme) {
+    --color-bg: #f8f8f8;
+    --color-fg: #1a1a1a;
+    --color-muted: #666666;
+    --color-border: #d0d0d0;
+    --color-accent: #4a7a8c;
+    --color-hover: #e8e8e8;
+  }
 }
 
 * {

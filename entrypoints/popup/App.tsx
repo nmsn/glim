@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe } from 'lucide-react';
+import { Globe, Sun, Moon, Monitor } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
@@ -18,6 +18,29 @@ import { SecurityCard } from './components/SecurityCard';
 import { HeadersCard } from './components/HeadersCard';
 import { ScrambleText } from './components/ScrambleText';
 import './style.css';
+
+type ThemeMode = 'light' | 'dark' | 'system';
+
+function getThemeMode(): ThemeMode {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light' || saved === 'dark') return saved;
+  return 'system';
+}
+
+function applySystemTheme() {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const root = document.documentElement;
+  root.classList.remove('light-theme', 'dark-theme');
+  if (!prefersDark) {
+    root.classList.add('light-theme');
+  }
+}
+
+function getCurrentThemeIcon() {
+  const mode = getThemeMode();
+  if (mode === 'system') return Monitor;
+  return document.documentElement.classList.contains('light-theme') ? Moon : Sun;
+}
 
 interface IpLocationInfo {
   ip: string;
@@ -48,6 +71,7 @@ function App() {
   const [selectedIpIndex, setSelectedIpIndex] = useState<number>(0);
   const [error, setError] = useState<string>('');
   const [hasFetched, setHasFetched] = useState<boolean>(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getThemeMode());
   const [loading, setLoading] = useState<LoadingState>({
     url: true,
     ip: false,
@@ -211,6 +235,19 @@ function App() {
     fetchAllData();
   }, [fetchAllData]);
 
+  useEffect(() => {
+    if (themeMode !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+    const handleChange = () => {
+      applySystemTheme();
+      setThemeMode(getThemeMode());
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [themeMode]);
+
   const hasSocialData = socialTags && (
     socialTags.title ||
     socialTags.description ||
@@ -236,18 +273,52 @@ function App() {
               className="font-display text-[12px] font-bold text-[var(--color-accent)] uppercase tracking-[2px] text-glow cursor-pointer"
             />
           </div>
-          <button
-            onClick={() => {
-              const newLang = i18n.language === 'zh-CN' ? 'en' : 'zh-CN';
-              i18n.changeLanguage(newLang);
-              localStorage.setItem('glim-language', newLang);
-            }}
-            className="flex items-center gap-1 px-[6px] py-[2px] text-[9px] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all cursor-pointer"
-            title={i18n.language === 'zh-CN' ? 'Switch to English' : '切换到中文'}
-          >
-            <Globe className="w-[10px] h-[10px]" />
-            <span>{i18n.language === 'zh-CN' ? 'EN' : '中文'}</span>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                const root = document.documentElement;
+                
+                if (themeMode === 'system') {
+                  root.classList.remove('dark-theme');
+                  root.classList.add('light-theme');
+                  localStorage.setItem('theme', 'light');
+                  setThemeMode('light');
+                } else if (themeMode === 'light') {
+                  root.classList.remove('light-theme');
+                  root.classList.add('dark-theme');
+                  localStorage.setItem('theme', 'dark');
+                  setThemeMode('dark');
+                } else {
+                  root.classList.remove('light-theme', 'dark-theme');
+                  localStorage.removeItem('theme');
+                  applySystemTheme();
+                  setThemeMode('system');
+                }
+              }}
+              className="flex items-center justify-center w-[22px] h-[22px] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all cursor-pointer"
+              title={themeMode === 'system' ? 'System Theme' : themeMode === 'light' ? 'Light Mode' : 'Dark Mode'}
+            >
+              {themeMode === 'system' ? (
+                <Monitor className="w-[10px] h-[10px]" />
+              ) : themeMode === 'light' ? (
+                <Moon className="w-[10px] h-[10px]" />
+              ) : (
+                <Sun className="w-[10px] h-[10px]" />
+              )}
+            </button>
+            <button
+              onClick={() => {
+                const newLang = i18n.language === 'zh-CN' ? 'en' : 'zh-CN';
+                i18n.changeLanguage(newLang);
+                localStorage.setItem('glim-language', newLang);
+              }}
+              className="flex items-center gap-1 px-[6px] py-[2px] text-[9px] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all cursor-pointer"
+              title={i18n.language === 'zh-CN' ? 'Switch to English' : '切换到中文'}
+            >
+              <Globe className="w-[10px] h-[10px]" />
+              <span>{i18n.language === 'zh-CN' ? 'EN' : '中文'}</span>
+            </button>
+          </div>
         </div>
 
         <div className="mt-[8px] flex items-center justify-between gap-[8px] px-[8px] py-[4px] border-l-2 border-[var(--color-accent)]">
