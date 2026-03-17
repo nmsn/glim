@@ -6,7 +6,22 @@
     "unknown": "Unknown",
     "fetching": "Fetching...",
     "fetchAgain": "Fetch Again",
-    "fetchCurrent": "Fetch Current Page Info"
+    "fetchCurrent": "Fetch Current Page Info",
+    "favicon_alt": "Favicon",
+    "copied": "Copied!"
+  },
+  "pageInfo": {
+    "title": "Basic Info",
+    "title_label": "Title",
+    "description": "Description",
+    "keywords": "Keywords",
+    "robots": "Robots",
+    "canonical": "Canonical",
+    "generator": "Generator",
+    "author": "Author",
+    "charset": "Charset",
+    "notFound": "Not found",
+    "favicon": "Favicon"
   },
   "serverLocation": {
     "title": "Server Location",

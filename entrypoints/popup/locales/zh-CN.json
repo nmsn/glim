@@ -6,7 +6,22 @@
     "unknown": "未知",
     "fetching": "获取中...",
     "fetchAgain": "再次获取",
-    "fetchCurrent": "获取当前页面信息"
+    "fetchCurrent": "获取当前页面信息",
+    "favicon_alt": "网站图标",
+    "copied": "已复制!"
+  },
+  "pageInfo": {
+    "title": "基本信息",
+    "title_label": "标题",
+    "description": "描述",
+    "keywords": "关键词",
+    "robots": "Robots",
+    "canonical": "Canonical",
+    "generator": "生成器",
+    "author": "作者",
+    "charset": "字符编码",
+    "notFound": "未找到",
+    "favicon": "网站图标"
   },
   "serverLocation": {
     "title": "服务器位置",

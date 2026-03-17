@@ -9,6 +9,8 @@ import { getSocialTagsFromContent } from '@/utils/social-tag-popup';
 import type { SocialTagResult } from '@/utils/social-tag';
 import { getIP } from '@/utils/get-ip';
 import { getServerLocation, type ServerLocation } from '@/utils/server-location';
+import { getMainFavicon } from '@/utils/favicon';
+import { FaviconDisplay } from './components/FaviconDisplay';
 import { ServerLocationCard } from './components/ServerLocationCard';
 import { PageInfoCard } from './components/PageInfoCard';
 import { SocialTagsCard } from './components/SocialTagsCard';
@@ -36,6 +38,8 @@ interface LoadingState {
 function App() {
   const { t, i18n } = useTranslation();
   const [currentUrl, setCurrentUrl] = useState<string>('');
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
+  const [loadingFavicon, setLoadingFavicon] = useState<boolean>(false);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [headers, setHeaders] = useState<Record<string, string> | null>(null);
   const [security, setSecurity] = useState<SecurityHeaders | null>(null);
@@ -138,6 +142,20 @@ function App() {
       try {
         const info = await getPageInfo();
         setPageInfo(info);
+        
+        // 获取网站图标
+        if (info.url) {
+          setLoadingFavicon(true);
+          try {
+            const favicon = await getMainFavicon(info.url);
+            setFaviconUrl(favicon);
+          } catch (err) {
+            console.error('获取图标失败:', err);
+            setFaviconUrl(null);
+          } finally {
+            setLoadingFavicon(false);
+          }
+        }
       } catch (err: any) {
         console.error('Page info error:', err);
       } finally {
@@ -233,7 +251,7 @@ function App() {
         </div>
 
         <div className="mt-[8px] flex items-center justify-between gap-[8px] px-[8px] py-[4px] border-l-2 border-[var(--color-accent)]">
-          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0">
+          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px] shrink-0 min-w-[60px]">
             {t('app.currentUrl')}
           </span>
           <span className="text-[10px] text-[var(--color-fg)] font-mono text-right truncate max-w-[260px]">
@@ -265,7 +283,12 @@ function App() {
         )}
 
         {(loading.pageInfo || pageInfo) && (
-          <PageInfoCard pageInfo={pageInfo} loading={loading.pageInfo} />
+          <PageInfoCard 
+            pageInfo={pageInfo} 
+            faviconUrl={faviconUrl} 
+            loadingFavicon={loadingFavicon} 
+            loading={loading.pageInfo} 
+          />
         )}
 
         {(loading.socialTags || hasSocialData) && socialTags && (
