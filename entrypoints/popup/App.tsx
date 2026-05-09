@@ -4,7 +4,7 @@ import { Globe, Sun, Moon, Monitor } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
-import { checkSecurityHeaders, type SecurityHeaders } from '@/utils/http-security';
+import { checkSecurityHeadersFromHeaders, type SecurityHeaders } from '@/utils/http-security';
 import { getSocialTagsFromContent } from '@/utils/social-tag-popup';
 import type { SocialTagResult } from '@/utils/social-tag';
 import { getIP } from '@/utils/get-ip';
@@ -187,25 +187,15 @@ function App() {
       }
     };
 
-    const fetchHeaders = async () => {
+    const fetchHeadersAndSecurity = async () => {
       try {
         const responseHeaders = await getResponseHeaders(tabUrl);
         setHeaders(responseHeaders);
+        setSecurity(checkSecurityHeadersFromHeaders(responseHeaders));
       } catch (err: any) {
         console.error('Headers error:', err);
       } finally {
-        setLoading(prev => ({ ...prev, headers: false }));
-      }
-    };
-
-    const fetchSecurity = async () => {
-      try {
-        const securityHeaders = await checkSecurityHeaders(tabUrl);
-        setSecurity(securityHeaders);
-      } catch (err: any) {
-        console.error('Security error:', err);
-      } finally {
-        setLoading(prev => ({ ...prev, security: false }));
+        setLoading(prev => ({ ...prev, headers: false, security: false }));
       }
     };
 
@@ -223,8 +213,7 @@ function App() {
     await Promise.all([
       fetchIP(),
       fetchPageInfo(),
-      fetchHeaders(),
-      fetchSecurity(),
+      fetchHeadersAndSecurity(),
       fetchSocialTags(),
     ]);
 
