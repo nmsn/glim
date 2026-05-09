@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GlowCard } from './GlowCard';
-import MapChart from './MapChart';
 import { CharScan } from './CharScan';
 import type { ServerLocation } from '@/utils/server-location';
+
+const MapChart = lazy(() => import('./MapChart'));
 
 interface IpLocationInfo {
   ip: string;
@@ -127,11 +128,19 @@ export function ServerLocationCard({
                   />
                 </div>
                 <div className="w-[120px] h-[120px] shrink-0">
-                  <MapChart
-                    lat={selectedIp.location.coords.lat}
-                    lon={selectedIp.location.coords.lon}
-                    label={selectedIp.location.city}
-                  />
+                  <Suspense
+                    fallback={
+                      <div className="w-full h-full flex items-center justify-center border border-[var(--color-border)]">
+                        <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-[0.3px]">Loading map...</span>
+                      </div>
+                    }
+                  >
+                    <MapChart
+                      lat={selectedIp.location.coords.lat}
+                      lon={selectedIp.location.coords.lon}
+                      label={selectedIp.location.city}
+                    />
+                  </Suspense>
                 </div>
               </div>
             )}
