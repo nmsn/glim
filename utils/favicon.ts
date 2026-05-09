@@ -14,9 +14,9 @@ export async function getFavicon(url: string): Promise<string[]> {
       // 在内容脚本中执行，以避免跨域问题
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
       if (tab?.id) {
-        const result = await browser.tabs.sendMessage(tab.id, { action: 'GET_FAVICONS' });
-        if (result && result.favicons && Array.isArray(result.favicons)) {
-          return result.favicons;
+        const result = await browser.tabs.sendMessage(tab.id, { type: 'GET_FAVICONS' });
+        if (result?.success && Array.isArray(result.data)) {
+          return result.data;
         }
       }
     } catch (error) {

@@ -1,21 +1,25 @@
+import { browser } from 'wxt/browser';
+
 export interface PageInfo {
   url: string;
   title: string;
-  html: string;
   referrer: string;
   contentType: string | null;
   charset: string | null;
 }
 
 export const getPageInfo = async (): Promise<PageInfo> => {
-  const url = window.location.href;
-  const title = document.title;
-  const html = document.documentElement.outerHTML;
-  const referrer = document.referrer;
-  const contentType = document.contentType || null;
-  const charset = document.characterSet || null;
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) {
+    throw new Error('无法获取当前标签页');
+  }
 
-  return { url, title, html, referrer, contentType, charset };
+  const response = await browser.tabs.sendMessage(tab.id, { type: 'GET_PAGE_INFO' });
+  if (!response?.success) {
+    throw new Error(response?.error || '获取页面信息失败');
+  }
+
+  return response.data;
 };
 
 export default getPageInfo;

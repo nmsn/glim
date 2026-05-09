@@ -1,7 +1,6 @@
 import { browser } from 'wxt/browser';
 import { getSocialTags, type SocialTagResult } from '../utils/social-tag';
 
-// 获取页面上的所有图标
 function getFaviconsFromPage(): string[] {
   const icons: string[] = [];
   const iconSelectors = [
@@ -35,21 +34,33 @@ function getFaviconsFromPage(): string[] {
   return icons;
 }
 
+function getPageInfoFromDOM() {
+  return {
+    url: window.location.href,
+    title: document.title,
+    referrer: document.referrer,
+    contentType: document.contentType || null,
+    charset: document.characterSet || null,
+  };
+}
+
 export default defineContentScript({
   matches: ['<all_urls>'],
   main() {
-    console.log('Hello content.');
-
-    const metadata = getSocialTags();
-    console.log('metadata', metadata);
-
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === 'GET_SOCIAL_TAGS') {
         const tags = getSocialTags();
         sendResponse({ success: true, data: tags });
-      } else if (message.action === 'GET_FAVICONS') {
+      } else if (message.type === 'GET_FAVICONS') {
         const favicons = getFaviconsFromPage();
-        sendResponse({ favicons });
+        sendResponse({ success: true, data: favicons });
+      } else if (message.type === 'GET_PAGE_INFO') {
+        try {
+          const info = getPageInfoFromDOM();
+          sendResponse({ success: true, data: info });
+        } catch (error: any) {
+          sendResponse({ success: false, error: error.message });
+        }
       }
       return true;
     });
