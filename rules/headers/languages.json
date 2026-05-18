@@ -1,0 +1,106 @@
+{
+  "headers": {
+    "languages": [
+      {
+        "name": "PHP",
+        "patterns": [
+          "x-powered-by:.*php",
+          "server:.*php",
+          "x-powered-by:.*(?:frankenphp|roadrunner|swoole|openswoole)",
+          "server:.*(?:frankenphp|roadrunner|swoole|openswoole)",
+          "set-cookie:.*phpsessid",
+          "\\.php(?:\\?|#|$)",
+          "x-generator:.*(?:wordpress|drupal|joomla|discuz|thinkphp)"
+        ]
+      },
+      {
+        "name": "Node.js",
+        "patterns": ["x-powered-by:.*(?:express|koa|fastify|nestjs|node)", "set-cookie:.*connect\\.sid"]
+      },
+      {
+        "name": "Python",
+        "patterns": [
+          "x-powered-by:.*(?:django|flask|fastapi|starlette|sanic)",
+          "server:.*(?:uvicorn|gunicorn|uwsgi|werkzeug|hypercorn|daphne|waitress|granian)"
+        ]
+      },
+      {
+        "name": "Python",
+        "caseSensitive": true,
+        "patterns": ["set-cookie:.*(?:^|[;,\\s])csrftoken(?:=|[,;\\s]|$)"]
+      },
+      {
+        "name": "Ruby",
+        "patterns": ["x-powered-by:.*(?:rails|phusion passenger|passenger)", "server:.*(?:puma|unicorn|passenger)", "x-runtime:"]
+      },
+      {
+        "name": "Java / JVM",
+        "patterns": [
+          "set-cookie:.*jsessionid",
+          "x-powered-by:.*(?:quarkus|micronaut|ktor|helidon|dropwizard|javalin|ratpack|vert\\.x|vertx|akka)",
+          "server:.*(?:tomcat|jetty|undertow|wildfly|weblogic|websphere|quarkus|micronaut|ktor|helidon|dropwizard|javalin|ratpack|vert\\.x|vertx|akka)"
+        ]
+      },
+      {
+        "name": "JSP / JavaServer Pages",
+        "patterns": ["set-cookie:.*jsessionid", "\\.jsp(?:\\?|#|$)", "\\.jspx(?:\\?|#|$)", "server:.*(?:tomcat|jetty|weblogic|websphere)"]
+      },
+      {
+        "name": "Java Servlet",
+        "patterns": [
+          "set-cookie:.*jsessionid",
+          "\\.do(?:\\?|#|$)",
+          "\\.action(?:\\?|#|$)",
+          "x-powered-by:.*(?:servlet|jsp)",
+          "server:.*(?:tomcat|jetty|undertow|wildfly|weblogic|websphere)"
+        ]
+      },
+      {
+        "name": "C# / .NET",
+        "patterns": [
+          "x-aspnet",
+          "x-powered-by:.*asp\\.net",
+          "server:.*(?:iis|kestrel)",
+          "set-cookie:.*asp\\.net_sessionid",
+          "\\.aspx(?:\\?|#|$)",
+          "\\.ashx(?:\\?|#|$)",
+          "\\.asmx(?:\\?|#|$)"
+        ]
+      },
+      {
+        "name": "Classic ASP / VBScript",
+        "patterns": ["set-cookie:.*aspsessionid", "x-powered-by:.*asp", "\\.asp(?:\\?|#|$)", "server:.*iis"]
+      },
+      {
+        "name": "ColdFusion / CFML",
+        "patterns": ["x-powered-by:.*coldfusion", "set-cookie:.*(?:cfid|cftoken)", "\\.cfm(?:\\?|#|$)", "\\.cfml(?:\\?|#|$)"]
+      },
+      {
+        "name": "Perl / CGI",
+        "patterns": ["server:.*mod_perl", "/cgi-bin/", "\\.cgi(?:\\?|#|$)", "\\.pl(?:\\?|#|$)"]
+      },
+      {
+        "name": "Lua / OpenResty",
+        "patterns": ["server:.*openresty", "x-powered-by:.*(?:openresty|lua)", "x-lua:"]
+      },
+      {
+        "name": "Go",
+        "patterns": [
+          "x-powered-by:.*(?:\\bgin(?:/\\d+(?:\\.\\d+)*)?\\b|\\bfiber(?:/\\d+(?:\\.\\d+)*)?\\b|\\becho(?:/\\d+(?:\\.\\d+)*)?\\b|\\bbeego\\b|\\bhertz(?:/\\d+(?:\\.\\d+)*)?\\b|cloudwego|goframe|go\\s*frame|go-kratos|\\bkratos\\b|\\biris\\b|gobuffalo|\\bbuffalo\\b|\\bgo\\b)",
+          "server:.*(?:caddy|\\bgin(?:/\\d+(?:\\.\\d+)*)?\\b|\\bfiber(?:/\\d+(?:\\.\\d+)*)?\\b|\\becho(?:/\\d+(?:\\.\\d+)*)?\\b|\\bbeego\\b|\\bhertz(?:/\\d+(?:\\.\\d+)*)?\\b|cloudwego|goframe|go\\s*frame|go-kratos|\\bkratos\\b|\\biris\\b|gobuffalo|\\bbuffalo\\b)"
+        ]
+      },
+      {
+        "name": "Rust",
+        "patterns": [
+          "x-powered-by:.*(?:rust|actix(?:-web)?|rocket(?:\\s*(?:rs|framework)|/\\d|\\s|$)|axum|warp|poem|salvo|tide|ntex|\\bhyper\\b)",
+          "server:.*(?:actix(?:-web)?|rocket(?:\\s*(?:rs|framework)|/\\d|\\s|$)|axum|warp|poem|salvo|tide|ntex|\\bhyper\\b)"
+        ]
+      },
+      {
+        "name": "Elixir",
+        "patterns": ["x-powered-by:.*phoenix", "server:.*cowboy"]
+      }
+    ]
+  }
+}

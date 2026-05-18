@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    "page/frontend-frameworks.json",
+    "page/ui-frameworks.json",
+    "page/build-runtime.json",
+    "page/cdn-providers.json",
+    "page/cdn-providers-page.json",
+    "page/languages.json",
+    "page/backend-hints.json",
+    "headers/server-products.json",
+    "headers/languages.json",
+    "headers/header-patterns.json",
+    "headers/interesting-headers.json",
+    "headers/cdn-providers.json"
+  ]
+}

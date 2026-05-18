@@ -1,0 +1,147 @@
+{
+  "page": {
+    "languages": [
+      {
+        "name": "JavaScript",
+        "kind": "浏览器脚本语言",
+        "confidence": "高",
+        "selectors": ["script[src], script:not([type]), script[type='text/javascript'], script[type='module']"]
+      },
+      {
+        "name": "TypeScript",
+        "kind": "前端源码语言线索",
+        "confidence": "低",
+        "patterns": ["(?:^|/)tslib(?:\\.esm)?\\.js(?:\\?|#|$)", "\\.tsx?(?:\\?|#|$)", "sourceMappingURL=[^\\s\"'<>]+\\.tsx?\\.map"]
+      },
+      {
+        "name": "Node.js",
+        "kind": "后端运行时",
+        "confidence": "低",
+        "patterns": ["express-session", "connect.sid", "nestjs"]
+      },
+      {
+        "defaults": {
+          "kind": "后端语言"
+        },
+        "rules": [
+          {
+            "name": "PHP",
+            "patterns": [
+              "\\.php(?:\\?|#|$)",
+              "index\\.php",
+              "phpsessid",
+              "PHPSESSID",
+              "laravel",
+              "symfony",
+              "thinkphp",
+              "discuz_uid"
+            ]
+          },
+          {
+            "name": "Python",
+            "patterns": ["django", "flask", "fastapi", "csrfmiddlewaretoken", "/static/admin/"]
+          },
+          {
+            "name": "Ruby",
+            "patterns": ["rails-ujs", "authenticity_token", "active_storage", "turbo-rails"]
+          }
+        ]
+      },
+      {
+        "name": "Java / JVM",
+        "kind": "后端语言 / 平台",
+        "patterns": ["jsessionid", "\\.jsp(?:\\?|#|$)", "javax.faces", "jakarta.faces", "spring-security", "wicket"]
+      },
+      {
+        "name": "JSP / JavaServer Pages",
+        "kind": "后端模板语言",
+        "confidence": "中",
+        "patterns": ["\\.jsp(?:\\?|#|$)", "\\.jspx(?:\\?|#|$)", "JSESSIONID", "javax\\.servlet\\.jsp", "org\\.apache\\.jsp"]
+      },
+      {
+        "name": "FreeMarker",
+        "kind": "后端模板语言",
+        "confidence": "中",
+        "patterns": [
+          "\\.ftl(?:\\?|#|$)",
+          "(?:^|/)pay/ftl(?:/|[?#\\s\"'<>]|$)",
+          "freemarker",
+          "FreeMarker template error",
+          "org\\.apache\\.freemarker"
+        ]
+      },
+      {
+        "name": "Java Servlet",
+        "kind": "后端 Java Web 技术",
+        "patterns": ["JSESSIONID", "\\.do(?:\\?|#|$)", "\\.action(?:\\?|#|$)", "/servlet/", "javax\\.servlet", "jakarta\\.servlet"]
+      },
+      {
+        "name": "C# / .NET",
+        "kind": "后端语言 / 平台",
+        "patterns": [
+          "__VIEWSTATE",
+          "__EVENTVALIDATION",
+          "\\.aspx(?:\\?|#|$)",
+          "\\.ashx(?:\\?|#|$)",
+          "\\.asmx(?:\\?|#|$)",
+          "aspnet",
+          "/_framework/blazor"
+        ]
+      },
+      {
+        "defaults": {
+          "kind": "后端脚本语言"
+        },
+        "rules": [
+          {
+            "name": "Classic ASP / VBScript",
+            "patterns": ["\\.asp(?:\\?|#|$)", "ASPSESSIONID", "VBScript", "Active Server Pages"]
+          },
+          {
+            "name": "ColdFusion / CFML",
+            "patterns": ["\\.cfm(?:\\?|#|$)", "\\.cfml(?:\\?|#|$)", "CFID=", "CFTOKEN=", "coldfusion"]
+          },
+          {
+            "name": "Perl / CGI",
+            "patterns": ["/cgi-bin/", "\\.cgi(?:\\?|#|$)", "\\.pl(?:\\?|#|$)", "mod_perl"]
+          }
+        ]
+      },
+      {
+        "name": "Lua / OpenResty",
+        "kind": "后端脚本语言 / 网关运行时",
+        "patterns": ["openresty", "ngx_lua", "lua-resty", "x-lua"]
+      },
+      {
+        "defaults": {
+          "kind": "后端语言"
+        },
+        "rules": [
+          {
+            "name": "Go",
+            "patterns": ["gorilla.csrf", "go-http-client", "gin-gonic", "fiber"]
+          },
+          {
+            "name": "Rust",
+            "confidence": "低",
+            "patterns": [
+              "powered by (?:actix(?:-web)?|axum|warp|poem|salvo|tide)",
+              "powered by rocket(?:\\s*(?:rs|framework)|/\\d|\\s|<|$)",
+              "\\bactix-web\\b",
+              "\\bactix_web\\b",
+              "\\baxum\\b",
+              "\\bwarp\\b",
+              "\\bpoem\\b",
+              "\\bsalvo\\b",
+              "\\btide\\b"
+            ]
+          },
+          {
+            "name": "Elixir",
+            "patterns": ["phoenix_live_view", "phx-click", "phx-submit", "live_socket", "phoenix_live_reload"]
+          }
+        ]
+      }
+    ]
+  }
+}
