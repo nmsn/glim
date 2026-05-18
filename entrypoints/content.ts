@@ -1,5 +1,12 @@
 import { browser } from 'wxt/browser';
-import { getSocialTags, type SocialTagResult } from '../utils/social-tag';
+import { getSocialTags } from '../utils/social-tag';
+
+const HTML_LIMIT = 500000;
+const IMAGE_LIMIT = 200;
+const NODE_LIMIT = 1000;
+const CSS_NAMES_LIMIT = 500;
+const CSS_VALUE_TRUNCATE_LENGTH = 160;
+const GLOBAL_KEYS_LIMIT = 5000;
 
 function getFaviconsFromPage(): string[] {
   const icons: string[] = [];
@@ -57,10 +64,12 @@ function collectPageData() {
   let resourceTiming: string[] = [];
   try {
     resourceTiming = performance.getEntriesByType('resource').map(e => e.name).filter(isInspectableUrl);
-  } catch {}
+  } catch (e) {
+    console.warn('Failed to get resource timing:', e);
+  }
 
   // 收集 images
-  const images = [...document.images].map(i => i.currentSrc || i.src).filter(isInspectableUrl).slice(0, 200);
+  const images = [...document.images].map(i => i.currentSrc || i.src).filter(isInspectableUrl).slice(0, IMAGE_LIMIT);
 
   // 收集所有资源
   const allResources = [...new Set([...scripts, ...stylesheets, ...resourceTiming, ...images])];
@@ -68,7 +77,7 @@ function collectPageData() {
   // 收集 class tokens
   const classTokens: Record<string, number> = {};
   const nodes = document.querySelectorAll('[class]');
-  const limit = Math.min(nodes.length, 1000);
+  const limit = Math.min(nodes.length, NODE_LIMIT);
   for (let i = 0; i < limit; i++) {
     const list = nodes[i].classList;
     if (list && list.length) {
@@ -90,22 +99,26 @@ function collectPageData() {
         const name = style.item(index);
         if (name && name.startsWith('--')) {
           cssNames.push(name);
-          if (!cssValues[name]) cssValues[name] = style.getPropertyValue(name).trim().slice(0, 160);
+          if (!cssValues[name]) cssValues[name] = style.getPropertyValue(name).trim().slice(0, CSS_VALUE_TRUNCATE_LENGTH);
         }
       }
-    } catch {}
+    } catch (e) {
+      console.warn('Failed to get computed style:', e);
+    }
   }
 
   // HTML sample
   const html = String(document.documentElement?.outerHTML || '')
     .replace(/data:[^"'()<>\s]+/gi, '[inline-data-url]')
-    .slice(0, 500000).toLowerCase();
+    .slice(0, HTML_LIMIT).toLowerCase();
 
   // Global keys (限制数量避免过大)
   let globalKeys: string[] = [];
   try {
-    globalKeys = Object.keys(window).slice(0, 5000);
-  } catch {}
+    globalKeys = Object.keys(window).slice(0, GLOBAL_KEYS_LIMIT);
+  } catch (e) {
+    console.warn('Failed to collect global keys:', e);
+  }
 
   return {
     url: window.location.href,
@@ -117,7 +130,7 @@ function collectPageData() {
     allResources,
     classes: classTokens,
     cssVariables: {
-      names: cssNames.slice(0, 500),
+      names: cssNames.slice(0, CSS_NAMES_LIMIT),
       values: cssValues,
     },
     html,
