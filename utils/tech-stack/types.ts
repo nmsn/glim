@@ -87,3 +87,17 @@ export interface RuleConfig {
   schemaVersion?: number
   [key: string]: unknown
 }
+
+export interface PageData {
+  url: string;
+  title: string;
+  scripts: string[];
+  stylesheets: string[];
+  resourceTiming: string[];
+  images: string[];
+  allResources: string[];
+  classes: Record<string, number>;
+  cssVariables: { names: string[]; values: Record<string, string> };
+  html: string;
+  globalKeys: string[];
+}
