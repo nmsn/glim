@@ -29,7 +29,11 @@ export function TechStackTab({ tabUrl }: TechStackTabProps) {
       try {
         const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
         if (tab?.id) {
-          const response = await browser.tabs.sendMessage(tab.id, { type: 'GET_PAGE_DATA' });
+          const response = await browser.tabs.sendMessage(
+              tab.id,
+              { type: 'GET_PAGE_DATA' },
+              { frameId: 0 }
+            );
           if (response?.success && response.data) {
             pageData = response.data;
           }
@@ -74,7 +78,15 @@ export function TechStackTab({ tabUrl }: TechStackTabProps) {
   }, [tabUrl]);
 
   useEffect(() => {
-    runDetection();
+    let cancelled = false;
+
+    runDetection().then(() => {
+      if (cancelled) return;
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [runDetection]);
 
   return (
