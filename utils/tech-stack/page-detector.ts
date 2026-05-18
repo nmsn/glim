@@ -1,5 +1,7 @@
 const yieldToMainThread = () => new Promise(resolve => setTimeout(resolve, 0))
 
+import type { RuleConfig, PageData, TechnologyRecord } from './types';
+
 export interface PageDetectionInput {
   frontendFrameworks: any[]
   uiFrameworks: any[]
@@ -258,6 +260,10 @@ const hasReactDomMarker = (): boolean => {
   return false
 }
 
+function hasReactDomMarkerFromData(data: PageData): boolean {
+  return data.globalKeys.some(key => key.startsWith('__reactFiber$') || key.startsWith('__reactProps$'));
+}
+
 const extractVersionFromUrl = (rule: any, url: string): string => {
   if (!url || typeof url !== 'string') return ''
   const name = String(rule?.name || '').trim()
@@ -338,6 +344,122 @@ const detectJsonRuleList = (add: Collector, rules: any[], context: any) => {
     if (!match) continue
     add(rule.category || context.defaultCategory || '其他库', rule.name, match.confidence, match.evidence, match.version ? { version: match.version } : undefined)
   }
+}
+
+export function detectPageTechnologiesFromData(
+  data: PageData,
+  rules: RuleConfig
+): TechnologyRecord[] {
+  const technologies: TechnologyRecord[] = [];
+
+  const add: (category: string, name: string, confidence: string, evidence?: string, extras?: { version?: string }) => void =
+    (category, name, confidence, evidence, extras) => {
+      const tech: TechnologyRecord = {
+        category,
+        name,
+        confidence: confidence as any,
+        evidence: evidence ? [evidence] : [],
+        source: '页面扫描',
+      };
+      if (extras?.version) tech.version = extras.version;
+      technologies.push(tech);
+    };
+
+  const resources = {
+    scripts: data.scripts,
+    stylesheets: data.stylesheets,
+    resourceTiming: data.resourceTiming,
+    images: data.images,
+    all: data.allResources,
+    text: data.allResources.join('\n').toLowerCase(),
+  };
+
+  const cssVariables = {
+    names: data.cssVariables.names,
+    values: data.cssVariables.values,
+    text: data.cssVariables.names.map(n => `${n}: ${data.cssVariables.values[n] || ''}`).join('\n').toLowerCase(),
+  };
+
+  const globalKeys = data.globalKeys;
+  const lowerHtml = data.html;
+
+  // 检测 React
+  if (hasReactDomMarkerFromData(data)) {
+    add('前端框架', 'React', '高', 'DOM 节点存在 React Fiber 标记');
+  }
+
+  // 检测前端框架
+  detectJsonRuleList(add, (rules as any).frontendFrameworks || [], {
+    defaultCategory: '前端框架',
+    resources,
+    classes: data.classes,
+    cssVariables,
+    text: `${resources.text}\n${lowerHtml}\n${globalKeys.join('\n')}`,
+    html: lowerHtml,
+    resourceConfidence: '中',
+    sourceLabel: 'JSON 前端框架规则',
+  });
+
+  // 检测 UI 框架
+  const atomicOrigin = detectAtomicCssOrigin(cssVariables);
+  if (atomicOrigin === 'unocss') add('UI / CSS 框架', 'UnoCSS', '高', '存在 --un-* CSS 变量');
+  else if (atomicOrigin === 'tailwind') add('UI / CSS 框架', 'Tailwind CSS', '高', '存在 --tw-* CSS 变量');
+  else if (scoreTailwind(data.classes) >= 10) add('UI / CSS 框架', 'Tailwind CSS', '中', '存在大量 Tailwind 风格原子类名');
+
+  detectJsonRuleList(add, (rules as any).uiFrameworks || [], {
+    defaultCategory: 'UI / CSS 框架',
+    resources,
+    classes: data.classes,
+    cssVariables,
+    text: `${resources.text}\n${lowerHtml}\n${cssVariables.text}`,
+    html: lowerHtml,
+    sourceLabel: 'JSON UI 框架规则',
+  });
+
+  // 检测构建运行时
+  detectJsonRuleList(add, (rules as any).buildRuntime || [], {
+    defaultCategory: '构建与运行时',
+    resources,
+    classes: data.classes,
+    cssVariables,
+    text: `${resources.text}\n${lowerHtml}\n${globalKeys.join('\n')}`,
+    html: lowerHtml,
+    sourceLabel: 'JSON 构建运行时规则',
+  });
+
+  // 检测 CDN
+  detectJsonRuleList(add, (rules as any).cdnProviders || [], {
+    defaultCategory: 'CDN / 托管',
+    resources,
+    classes: data.classes,
+    cssVariables,
+    text: resources.text,
+    html: lowerHtml,
+    resourceOnly: true,
+    sourceLabel: 'JSON CDN 规则',
+  });
+
+  // 检测后端框架
+  detectJsonRuleList(add, (rules as any).backendHints || [], {
+    defaultCategory: '后端 / 服务器框架',
+    resources,
+    classes: data.classes,
+    text: `${data.url}\n${resources.text}\n${lowerHtml}`,
+    html: lowerHtml,
+    sourceLabel: 'JSON 后端规则',
+  });
+
+  // 检测语言
+  detectJsonRuleList(add, (rules as any).languages || [], {
+    defaultCategory: '开发语言 / 运行时',
+    resources,
+    classes: data.classes,
+    text: `${resources.text}\n${lowerHtml}`,
+    html: lowerHtml,
+    sourceLabel: 'JSON 语言规则',
+  });
+
+  return technologies;
 }
 
 export async function detectPageTechnologies(input: PageDetectionInput): Promise<DetectionResult> {
