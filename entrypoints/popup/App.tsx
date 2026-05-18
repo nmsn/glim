@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe, Sun, Moon, Monitor } from 'lucide-react';
+import { Globe, Sun, Moon, Monitor, Cpu } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
@@ -17,8 +17,10 @@ import { SocialTagsCard } from './components/SocialTagsCard';
 import { SecurityCard } from './components/SecurityCard';
 import { HeadersCard } from './components/HeadersCard';
 import { ScrambleText } from './components/ScrambleText';
+import { TechStackTab } from './tabs/TechStackTab';
 import './style.css';
 
+type TabId = 'info' | 'tech-stack';
 type ThemeMode = 'light' | 'dark' | 'system';
 
 function getThemeMode(): ThemeMode {
@@ -80,6 +82,7 @@ function App() {
     security: false,
     socialTags: false,
   });
+  const [activeTab, setActiveTab] = useState<TabId>('info');
 
   const fetchAllData = useCallback(async () => {
     setError('');
@@ -264,9 +267,31 @@ function App() {
           </div>
           <div className="flex items-center gap-1">
             <button
+              onClick={() => setActiveTab('info')}
+              className={`flex items-center gap-1 px-[6px] py-[2px] text-[9px] border transition-all cursor-pointer ${
+                activeTab === 'info'
+                  ? 'border-[var(--color-accent)] text-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                  : 'border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
+              }`}
+            >
+              <Monitor className="w-[10px] h-[10px]" />
+              <span>Info</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('tech-stack')}
+              className={`flex items-center gap-1 px-[6px] py-[2px] text-[9px] border transition-all cursor-pointer ${
+                activeTab === 'tech-stack'
+                  ? 'border-[var(--color-accent)] text-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                  : 'border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
+              }`}
+            >
+              <Cpu className="w-[10px] h-[10px]" />
+              <span>Tech</span>
+            </button>
+            <button
               onClick={() => {
                 const root = document.documentElement;
-                
+
                 if (themeMode === 'system') {
                   root.classList.remove('dark-theme');
                   root.classList.add('light-theme');
@@ -324,45 +349,49 @@ function App() {
         </div>
       </header>
 
-      <main className="space-y-[10px]">
-        {error && (
-          <div className="p-[8px] border border-[var(--color-accent)] bg-[var(--color-accent)]/10">
-            <span className="text-[10px] text-[var(--color-accent)] font-mono">
-              {error}
-            </span>
-          </div>
-        )}
+      {activeTab === 'tech-stack' ? (
+          <TechStackTab tabUrl={currentUrl} />
+        ) : (
+          <main className="space-y-[10px]">
+            {error && (
+              <div className="p-[8px] border border-[var(--color-accent)] bg-[var(--color-accent)]/10">
+                <span className="text-[10px] text-[var(--color-accent)] font-mono">
+                  {error}
+                </span>
+              </div>
+            )}
 
-        {(loading.ip || ipLocations.length > 0) && (
-          <ServerLocationCard
-            ipLocations={ipLocations}
-            selectedIpIndex={selectedIpIndex}
-            onSelectIp={setSelectedIpIndex}
-            loading={loading.ip}
-          />
-        )}
+            {(loading.ip || ipLocations.length > 0) && (
+              <ServerLocationCard
+                ipLocations={ipLocations}
+                selectedIpIndex={selectedIpIndex}
+                onSelectIp={setSelectedIpIndex}
+                loading={loading.ip}
+              />
+            )}
 
-        {(loading.pageInfo || pageInfo) && (
-          <PageInfoCard 
-            pageInfo={pageInfo} 
-            faviconUrl={faviconUrl} 
-            loadingFavicon={loadingFavicon} 
-            loading={loading.pageInfo} 
-          />
-        )}
+            {(loading.pageInfo || pageInfo) && (
+              <PageInfoCard
+                pageInfo={pageInfo}
+                faviconUrl={faviconUrl}
+                loadingFavicon={loadingFavicon}
+                loading={loading.pageInfo}
+              />
+            )}
 
-        {(loading.socialTags || hasSocialData) && socialTags && (
-          <SocialTagsCard socialTags={socialTags} loading={loading.socialTags} />
-        )}
+            {(loading.socialTags || hasSocialData) && socialTags && (
+              <SocialTagsCard socialTags={socialTags} loading={loading.socialTags} />
+            )}
 
-        {(loading.security || security) && (
-          <SecurityCard security={security} loading={loading.security} />
-        )}
+            {(loading.security || security) && (
+              <SecurityCard security={security} loading={loading.security} />
+            )}
 
-        {(loading.headers || headers) && (
-          <HeadersCard headers={headers} loading={loading.headers} />
+            {(loading.headers || headers) && (
+              <HeadersCard headers={headers} loading={loading.headers} />
+            )}
+          </main>
         )}
-      </main>
 
       <footer className="mt-[12px] pt-[8px] border-t border-[var(--color-border)]">
         <button
