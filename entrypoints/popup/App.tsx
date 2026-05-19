@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe, Sun, Moon, Monitor, Cpu } from 'lucide-react';
+import { Globe, Sun, Moon, Monitor } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { getResponseHeaders } from '@/utils/headers';
 import { getPageInfo, type PageInfo } from '@/utils/page-info';
@@ -16,11 +16,16 @@ import { PageInfoCard } from './components/PageInfoCard';
 import { SocialTagsCard } from './components/SocialTagsCard';
 import { SecurityCard } from './components/SecurityCard';
 import { HeadersCard } from './components/HeadersCard';
+import { TechStackCard } from './components/TechStackCard';
 import { ScrambleText } from './components/ScrambleText';
-import { TechStackTab } from './tabs/TechStackTab';
+import type { TechnologyRecord } from '@/utils/tech-stack/types';
+import { loadRules } from '@/utils/tech-stack/rule-loader';
+import { detectFromHeaders } from '@/utils/tech-stack/header-detector';
+import { detectPageTechnologiesFromData } from '@/utils/tech-stack/page-detector';
+import { mergeTechnologyRecords } from '@/utils/tech-stack/merge';
+import type { RuleConfig, PageData } from '@/utils/tech-stack/types';
 import './style.css';
 
-type TabId = 'info' | 'tech-stack';
 type ThemeMode = 'light' | 'dark' | 'system';
 
 function getThemeMode(): ThemeMode {
@@ -58,6 +63,7 @@ interface LoadingState {
   headers: boolean;
   security: boolean;
   socialTags: boolean;
+  techStack: boolean;
 }
 
 function App() {
@@ -81,8 +87,9 @@ function App() {
     headers: false,
     security: false,
     socialTags: false,
+    techStack: false,
   });
-  const [activeTab, setActiveTab] = useState<TabId>('info');
+  const [techStack, setTechStack] = useState<TechnologyRecord[]>([]);
 
   const fetchAllData = useCallback(async () => {
     setError('');
@@ -93,6 +100,7 @@ function App() {
     setSocialTags(null);
     setIpLocations([]);
     setSelectedIpIndex(0);
+    setTechStack([]);
 
     setLoading(prev => ({ ...prev, url: true }));
 
@@ -115,7 +123,7 @@ function App() {
 
     setLoading(prev => ({ ...prev, url: false }));
 
-    setLoading(prev => ({ ...prev, ip: true, pageInfo: true, headers: true, security: true, socialTags: true }));
+    setLoading(prev => ({ ...prev, ip: true, pageInfo: true, headers: true, security: true, socialTags: true, techStack: true }));
 
     const fetchIP = async () => {
       try {
@@ -213,11 +221,59 @@ function App() {
       }
     };
 
+    const fetchTechStack = async () => {
+      try {
+        const rules = await loadRules() as RuleConfig;
+
+        let pageData: PageData | null = null;
+        try {
+          const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+          if (tab?.id) {
+            const response = await browser.tabs.sendMessage(
+              tab.id,
+              { type: 'GET_PAGE_DATA' },
+              { frameId: 0 }
+            );
+            if (response?.success && response.data) {
+              pageData = response.data;
+            }
+          }
+        } catch (err) {
+          console.error('获取页面数据失败:', err);
+        }
+
+        const [pageTechnologies, headerRecords] = await Promise.all([
+          pageData ? Promise.resolve(detectPageTechnologiesFromData(pageData, rules)) : Promise.resolve([]),
+          getResponseHeaders(tabUrl).catch(() => null),
+        ]);
+
+        const headerTechs = headerRecords
+          ? detectFromHeaders(headerRecords, tabUrl, {
+              serverProducts: (rules as any).serverProducts || [],
+              poweredByProducts: (rules as any).poweredByProducts || [],
+              headerPatterns: (rules as any).headerPatterns || [],
+              cdnProviders: (rules as any).cdnProviders || [],
+              languages: (rules as any).languages || [],
+              websitePrograms: (rules as any).websitePrograms || [],
+              interestingHeaders: (rules as any).interestingHeaders || [],
+            })
+          : [];
+
+        const merged = mergeTechnologyRecords([...pageTechnologies, ...headerTechs]);
+        setTechStack(merged);
+      } catch (err: any) {
+        console.error('Tech stack detection error:', err);
+      } finally {
+        setLoading(prev => ({ ...prev, techStack: false }));
+      }
+    };
+
     await Promise.all([
       fetchIP(),
       fetchPageInfo(),
       fetchHeadersAndSecurity(),
       fetchSocialTags(),
+      fetchTechStack(),
     ]);
 
     setHasFetched(true);
@@ -266,28 +322,6 @@ function App() {
             />
           </div>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => setActiveTab('info')}
-              className={`flex items-center gap-1 px-[6px] py-[2px] text-[9px] border transition-all cursor-pointer ${
-                activeTab === 'info'
-                  ? 'border-[var(--color-accent)] text-[var(--color-accent)] bg-[var(--color-accent)]/10'
-                  : 'border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-              }`}
-            >
-              <Monitor className="w-[10px] h-[10px]" />
-              <span>Info</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('tech-stack')}
-              className={`flex items-center gap-1 px-[6px] py-[2px] text-[9px] border transition-all cursor-pointer ${
-                activeTab === 'tech-stack'
-                  ? 'border-[var(--color-accent)] text-[var(--color-accent)] bg-[var(--color-accent)]/10'
-                  : 'border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-              }`}
-            >
-              <Cpu className="w-[10px] h-[10px]" />
-              <span>Tech</span>
-            </button>
             <button
               onClick={() => {
                 const root = document.documentElement;
@@ -349,10 +383,7 @@ function App() {
         </div>
       </header>
 
-      {activeTab === 'tech-stack' ? (
-          <TechStackTab tabUrl={currentUrl} />
-        ) : (
-          <main className="space-y-[10px]">
+      <main className="space-y-[10px]">
             {error && (
               <div className="p-[8px] border border-[var(--color-accent)] bg-[var(--color-accent)]/10">
                 <span className="text-[10px] text-[var(--color-accent)] font-mono">
@@ -390,8 +421,11 @@ function App() {
             {(loading.headers || headers) && (
               <HeadersCard headers={headers} loading={loading.headers} />
             )}
+
+            {(loading.techStack || techStack.length > 0) && (
+              <TechStackCard technologies={techStack} loading={loading.techStack} />
+            )}
           </main>
-        )}
 
       <footer className="mt-[12px] pt-[8px] border-t border-[var(--color-border)]">
         <button

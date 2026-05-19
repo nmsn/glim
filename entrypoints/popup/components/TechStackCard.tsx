@@ -1,13 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, Package, Layers, Server, Code2, RefreshCw } from 'lucide-react';
+import { ChevronDown, ChevronRight, Package, Layers, Server, Code2 } from 'lucide-react';
 import type { TechnologyRecord, Confidence } from '@/utils/tech-stack/types';
 import { GlowCard } from './GlowCard';
 
 interface TechStackCardProps {
   technologies: TechnologyRecord[];
   loading?: boolean;
-  onRefresh?: () => void;
 }
 
 const CONFIDENCE_ORDER: Record<Confidence, number> = { 高: 3, 中: 2, 低: 1 };
@@ -89,7 +88,7 @@ function groupByCategory(techs: TechnologyRecord[]): Record<string, TechnologyRe
   return groups;
 }
 
-export function TechStackCard({ technologies, loading, onRefresh }: TechStackCardProps) {
+export function TechStackCard({ technologies, loading }: TechStackCardProps) {
   const { t } = useTranslation();
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set(['前端框架', 'UI / CSS 框架', '前端库', '开发语言 / 运行时', '后端 / 服务器框架']));
 
@@ -129,22 +128,6 @@ export function TechStackCard({ technologies, loading, onRefresh }: TechStackCar
   return (
     <GlowCard title={t('techStack.title')} loading={loading}>
       <div className="space-y-[6px]">
-        {/* Refresh button */}
-        <div className="flex justify-end px-1">
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className={`flex items-center gap-1 px-2 py-1 text-[9px] font-mono border transition-all cursor-pointer
-              ${loading
-                ? 'border-[var(--color-border)] text-[var(--color-muted)] cursor-not-allowed'
-                : 'border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-              }
-            `}
-          >
-            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-            <span>{t('techStack.refresh')}</span>
-          </button>
-        </div>
         {loading && technologies.length === 0 ? (
           <div className="flex items-center justify-center py-4">
             <span className="text-[10px] text-[var(--color-muted)] animate-pulse">{t('techStack.detecting')}</span>
