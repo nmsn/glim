@@ -1,0 +1,348 @@
+{
+  "headers": {
+    "serverProducts": [
+      {
+        "defaults": {
+          "category": "Web 服务器"
+        },
+        "rules": [
+          {
+            "name": "Nginx",
+            "patterns": ["nginx"]
+          },
+          {
+            "name": "OpenResty",
+            "patterns": ["openresty"]
+          },
+          {
+            "name": "Tengine",
+            "patterns": ["tengine"]
+          },
+          {
+            "name": "Apache HTTP Server",
+            "patterns": ["\\bapache(?:/\\d+(?:\\.\\d+)*)?\\b(?![-\\s]*(?:traffic\\s*server|coyote))(?!-)"]
+          },
+          {
+            "name": "Microsoft IIS",
+            "patterns": ["microsoft-iis|iis"]
+          },
+          {
+            "name": "LiteSpeed",
+            "patterns": ["litespeed"]
+          },
+          {
+            "name": "Caddy",
+            "patterns": ["caddy"]
+          },
+          {
+            "name": "Envoy",
+            "patterns": ["envoy"]
+          },
+          {
+            "name": "Traefik",
+            "patterns": ["traefik"]
+          },
+          {
+            "name": "HAProxy",
+            "patterns": ["haproxy"]
+          },
+          {
+            "name": "Varnish",
+            "patterns": ["varnish"]
+          },
+          {
+            "name": "Squid",
+            "patterns": ["^squid(?:/\\d+(?:\\.\\d+)*)?$"]
+          },
+          {
+            "name": "Apache Traffic Server",
+            "patterns": ["^(?:apache\\s*traffic\\s*server|apachetrafficserver|traffic\\s*server|trafficserver|ats)(?:/\\d+(?:\\.\\d+)*)?$"]
+          },
+          {
+            "name": "Kong Gateway",
+            "patterns": ["^kong(?:/\\d+(?:\\.\\d+)*)?$"]
+          },
+          {
+            "name": "Apache APISIX",
+            "patterns": ["^apisix(?:/\\d+(?:\\.\\d+)*)?$"]
+          },
+          {
+            "name": "Jetty",
+            "patterns": ["jetty"]
+          },
+          {
+            "name": "Tomcat",
+            "patterns": ["tomcat"]
+          },
+          {
+            "name": "Undertow",
+            "patterns": ["undertow"]
+          },
+          {
+            "name": "WildFly",
+            "patterns": ["wildfly"]
+          },
+          {
+            "name": "GlassFish",
+            "patterns": ["glassfish"]
+          },
+          {
+            "name": "WebSphere",
+            "patterns": ["websphere"]
+          },
+          {
+            "name": "WebLogic",
+            "patterns": ["weblogic"]
+          },
+          {
+            "name": "Kestrel",
+            "patterns": ["kestrel"]
+          },
+          {
+            "name": "Cowboy",
+            "patterns": ["cowboy"]
+          },
+          {
+            "name": "Puma",
+            "patterns": ["puma"]
+          },
+          {
+            "name": "Unicorn",
+            "patterns": ["unicorn"]
+          },
+          {
+            "name": "Phusion Passenger",
+            "patterns": ["phusion passenger|passenger(?:/\\d+(?:\\.\\d+)*)?"]
+          },
+          {
+            "name": "uWSGI",
+            "patterns": ["uwsgi"]
+          },
+          {
+            "name": "Gunicorn",
+            "patterns": ["gunicorn"]
+          },
+          {
+            "name": "Uvicorn",
+            "patterns": ["uvicorn"]
+          },
+          {
+            "name": "Hypercorn",
+            "patterns": ["hypercorn"]
+          },
+          {
+            "name": "Daphne",
+            "patterns": ["daphne"]
+          },
+          {
+            "name": "Waitress",
+            "patterns": ["waitress"]
+          },
+          {
+            "name": "Granian",
+            "patterns": ["granian"]
+          },
+          {
+            "name": "Werkzeug",
+            "patterns": ["werkzeug"]
+          },
+          {
+            "name": "FrankenPHP",
+            "patterns": ["frankenphp"]
+          },
+          {
+            "name": "RoadRunner",
+            "patterns": ["roadrunner"]
+          },
+          {
+            "name": "Swoole",
+            "patterns": ["\\bswoole\\b"]
+          },
+          {
+            "name": "OpenSwoole",
+            "patterns": ["openswoole|open\\s*swoole"]
+          }
+        ]
+      },
+      {
+        "defaults": {
+          "category": "后端 / 服务器框架"
+        },
+        "rules": [
+          {
+            "name": "Node.js",
+            "patterns": ["node\\.?js"]
+          },
+          {
+            "name": "Deno",
+            "patterns": ["deno"]
+          },
+          {
+            "name": "Bun",
+            "patterns": ["\\bbun\\b"]
+          },
+          {
+            "name": "Hono",
+            "patterns": ["\\bhono(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Elysia",
+            "patterns": ["\\belysia(?:js|\\.js)?(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Gin",
+            "patterns": ["\\bgin(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Fiber",
+            "patterns": ["\\bfiber(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Go Echo",
+            "patterns": ["\\becho(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Beego",
+            "patterns": ["\\bbeego\\b"]
+          },
+          {
+            "name": "CloudWeGo Hertz",
+            "patterns": ["\\bhertz(?:/\\d+(?:\\.\\d+)*)?\\b|cloudwego"]
+          },
+          {
+            "name": "GoFrame",
+            "patterns": ["goframe|go\\s*frame"]
+          },
+          {
+            "name": "Kratos",
+            "patterns": ["go-kratos|\\bkratos\\b"]
+          },
+          {
+            "name": "Go Iris",
+            "patterns": ["\\biris(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Buffalo",
+            "patterns": ["gobuffalo|\\bbuffalo\\b"]
+          },
+          {
+            "name": "Rust Actix",
+            "patterns": ["actix(?:-web)?"]
+          },
+          {
+            "name": "Rust Rocket",
+            "patterns": ["rocket(?:\\s*(?:rs|framework)|/\\d|\\s|$)"]
+          },
+          {
+            "name": "Rust Axum",
+            "patterns": ["\\baxum\\b"]
+          },
+          {
+            "name": "Rust Warp",
+            "patterns": ["\\bwarp\\b"]
+          },
+          {
+            "name": "Rust Poem",
+            "patterns": ["\\bpoem\\b"]
+          },
+          {
+            "name": "Rust Salvo",
+            "patterns": ["\\bsalvo\\b"]
+          },
+          {
+            "name": "Rust Tide",
+            "patterns": ["\\btide\\b"]
+          },
+          {
+            "name": "Rust Ntex",
+            "patterns": ["\\bntex\\b"]
+          },
+          {
+            "name": "Rust Hyper",
+            "confidence": "中",
+            "patterns": ["\\bhyper\\b"]
+          },
+          {
+            "name": "Quarkus",
+            "patterns": ["\\bquarkus\\b"]
+          },
+          {
+            "name": "Micronaut",
+            "patterns": ["\\bmicronaut\\b"]
+          },
+          {
+            "name": "Ktor",
+            "patterns": ["\\bktor(?:/\\d+(?:\\.\\d+)*)?\\b"]
+          },
+          {
+            "name": "Helidon",
+            "patterns": ["\\bhelidon\\b"]
+          },
+          {
+            "name": "Dropwizard",
+            "patterns": ["\\bdropwizard\\b"]
+          },
+          {
+            "name": "Javalin",
+            "patterns": ["\\bjavalin\\b"]
+          },
+          {
+            "name": "Ratpack",
+            "patterns": ["\\bratpack\\b"]
+          }
+        ]
+      },
+      {
+        "defaults": {
+          "category": "CDN / 托管"
+        },
+        "rules": [
+          {
+            "name": "Vercel",
+            "patterns": ["vercel"]
+          },
+          {
+            "name": "Cloudflare",
+            "patterns": ["cloudflare"]
+          },
+          {
+            "name": "AmazonS3",
+            "patterns": ["amazons3|amazon s3|s3"]
+          },
+          {
+            "name": "Akamai",
+            "patterns": ["akamai|ghost"]
+          },
+          {
+            "name": "Fastly",
+            "patterns": ["fastly"]
+          },
+          {
+            "name": "Bunny CDN",
+            "patterns": ["bunnycdn|bunny"]
+          },
+          {
+            "name": "Gcore CDN",
+            "patterns": ["gcore"]
+          },
+          {
+            "name": "Tencent Cloud CDN",
+            "patterns": ["qcloudcdn|myqcloud|tencent-cloud|tencent-cdn|tencent-cos|tencentcs|tencentcdn"]
+          },
+          {
+            "name": "Alibaba Cloud CDN",
+            "patterns": ["aliyun|alibaba|tengine"]
+          },
+          {
+            "name": "Huawei Cloud CDN",
+            "patterns": ["huawei|hwcdn"]
+          },
+          {
+            "name": "Baidu Cloud CDN",
+            "patterns": ["baidu|bce"]
+          }
+        ]
+      }
+    ]
+  }
+}

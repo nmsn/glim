@@ -1,0 +1,239 @@
+{
+  "page": {
+    "uiFrameworks": [
+      {
+        "defaults": {
+          "category": "UI / CSS 框架"
+        },
+        "rules": [
+          {
+            "defaults": {
+              "confidence": "高"
+            },
+            "rules": [
+              {
+                "name": "Bootstrap",
+                "patterns": ["bootstrap(?:\\.bundle)?(?:\\.min)?\\.(?:js|css)"],
+                "globals": ["bootstrap"]
+              },
+              {
+                "name": "Tailwind CSS",
+                "patterns": [
+                  "cdn\\.tailwindcss\\.com",
+                  "(?:^|/)[^\\s\"'<>/]*tailwind[^\\s\"'<>/]*\\.css(?:[?#]|[\"'<>\\s]|$)",
+                  "tailwind\\.config"
+                ]
+              },
+              {
+                "name": "shadcn/ui",
+                "patterns": ["shadcn", "@shadcn\\/ui", "components\\/ui", "class-variance-authority"],
+                "cssVariables": [
+                  "--background",
+                  "--foreground",
+                  "--card",
+                  "--card-foreground",
+                  "--popover",
+                  "--popover-foreground",
+                  "--primary",
+                  "--primary-foreground",
+                  "--secondary",
+                  "--secondary-foreground",
+                  "--muted",
+                  "--muted-foreground",
+                  "--accent",
+                  "--accent-foreground",
+                  "--destructive",
+                  "--destructive-foreground",
+                  "--border",
+                  "--input",
+                  "--ring",
+                  "--radius"
+                ],
+                "minCssVariableMatches": 10
+              }
+            ]
+          },
+          {
+            "defaults": {
+              "confidence": "中"
+            },
+            "rules": [
+              {
+                "name": "Material UI",
+                "patterns": ["@mui", "material-ui", "mui-", "data-emotion=\"css"],
+                "classPrefixes": ["Mui"]
+              },
+              {
+                "name": "Ant Design",
+                "patterns": ["(?:^|/)antd(?:\\.min)?\\.(?:js|css)", "ant-design"],
+                "classPrefixes": ["ant-"]
+              },
+              {
+                "name": "Element UI / Element Plus",
+                "patterns": [
+                  "element-plus",
+                  "element-ui",
+                  "(?=[\\s\\S]*(?:^|/)element/index(?:\\.min)?\\.js(?:[?#]|[\"'<>\\s]|$))(?=[\\s\\S]*(?:(?:^|/)element/index(?:\\.min)?\\.css(?:[?#]|[\"'<>\\s]|$)|el-(?:button|form|input|table|dialog|select)))"
+                ],
+                "classPrefixes": ["el-"]
+              }
+            ]
+          },
+          {
+            "name": "Vuetify",
+            "confidence": "高",
+            "patterns": ["vuetify"],
+            "selectors": [".v-application"]
+          },
+          {
+            "defaults": {
+              "confidence": "中"
+            },
+            "rules": [
+              {
+                "name": "Chakra UI",
+                "patterns": ["@chakra-ui", "chakra-ui"],
+                "classPrefixes": ["chakra-"],
+                "selectors": ["[data-theme][style*=\"--chakra\"]"]
+              },
+              {
+                "name": "Bulma",
+                "patterns": ["bulma(?:\\.min)?\\.css"]
+              },
+              {
+                "name": "Pico CSS",
+                "patterns": ["@picocss/pico", "(?:^|/)pico(?:\\.classless)?(?:\\.min)?\\.css(?:[?#]|$)"]
+              },
+              {
+                "name": "UnoCSS",
+                "patterns": ["@unocss/", "(?:^|/)unocss(?:\\.min)?\\.css(?:[?#]|$)", "__unocss_hash"]
+              },
+              {
+                "name": "Windi CSS",
+                "patterns": ["@windicss/", "windicss", "(?:^|/)windi(?:\\.min)?\\.css(?:[?#]|$)"]
+              },
+              {
+                "name": "Open Props",
+                "patterns": ["@open-props/", "(?:^|/)open-props(?:\\.min)?\\.css(?:[?#]|$)"]
+              },
+              {
+                "name": "Primer CSS",
+                "patterns": ["@primer/css", "(?:^|/)primer(?:\\.min)?\\.css(?:[?#]|$)"]
+              },
+              {
+                "name": "NES.css",
+                "patterns": ["nes(?:\\.min)?\\.css(?:[?#]|$)", "nostalgic-css\\.github\\.io/NES\\.css"]
+              },
+              {
+                "name": "Semantic UI / Fomantic UI",
+                "patterns": ["semantic(?:\\.min)?\\.(?:css|js)", "fomantic"],
+                "selectors": [".ui.button", ".ui.menu", ".ui.dropdown"]
+              },
+              {
+                "name": "Foundation",
+                "patterns": ["foundation(?:\\.min)?\\.(?:css|js)"],
+                "classNames": ["grid-x", "top-bar", "callout"]
+              }
+            ]
+          },
+          {
+            "name": "Ionic",
+            "confidence": "高",
+            "patterns": [
+              "(?:^|/)ionic(?:\\.bundle)?(?:\\.min)?\\.(?:js|css)(?:[?#\"'<>\\s]|$)",
+              "@ionic\\/(?:core|angular|react|vue)(?:[@/])",
+              "(?:^|/)assets\\/ionic\\/"
+            ],
+            "selectors": ["ion-app", "ion-content", "ion-button"]
+          },
+          {
+            "defaults": {
+              "confidence": "中"
+            },
+            "rules": [
+              {
+                "name": "Quasar",
+                "patterns": ["quasar"],
+                "globals": ["Quasar"],
+                "classPrefixes": ["q-"]
+              },
+              {
+                "name": "Prime UI",
+                "patterns": ["primevue", "primereact", "primeng"],
+                "selectors": [".p-component", ".p-button", ".p-dialog"]
+              },
+              {
+                "name": "Vant",
+                "patterns": ["(?:^|[\\/@._-])vant(?:\\.min)?\\.(?:js|css)(?:[?#]|$)", "(?:^|[\\/@])vant(?:@|/es/|/lib/|/dist/)"],
+                "classPrefixes": ["van-"]
+              },
+              {
+                "name": "Arco Design",
+                "patterns": ["arco-design"],
+                "classPrefixes": ["arco-"]
+              },
+              {
+                "name": "TDesign",
+                "patterns": ["tdesign"],
+                "classPrefixes": ["tdesign-"]
+              },
+              {
+                "name": "Layui",
+                "patterns": [
+                  "(?:^|/)layui(?:\\.all)?(?:\\.min)?\\.(?:js|css)(?:[?#]|[\"'<>\\s]|$)",
+                  "(?:^|/)layui/(?:layui|css/layui)[^\\s\"'<>]*\\.(?:js|css)(?:[?#]|[\"'<>\\s]|$)"
+                ],
+                "classNames": ["layui-btn", "layui-form"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "category": "构建与运行时",
+        "name": "Emotion",
+        "confidence": "中",
+        "patterns": ["data-emotion="],
+        "selectors": ["style[data-emotion]", "style[data-s]"]
+      },
+      {
+        "category": "构建与运行时",
+        "name": "styled-components",
+        "confidence": "高",
+        "patterns": ["data-styled="],
+        "selectors": ["style[data-styled-version]", "style[data-styled]"],
+        "versionFromAttribute": "data-styled-version"
+      },
+      {
+        "category": "UI / CSS 框架",
+        "name": "shadcn-vue",
+        "url": "https://www.shadcn-vue.com",
+        "confidence": "中",
+        "matchIn": ["resources"],
+        "minPatternMatches": 5,
+        "patterns": [
+          "(?:^|/)Card\\.vue_vue_type_script_setup",
+          "(?:^|/)(?:Dialog|Sheet)(?:Title|Content|Description|Footer|ScrollContent)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Tabs(?:Trigger|Content|List)?\\.vue_vue_type_script_setup",
+          "(?:^|/)DropdownMenu(?:Trigger|Content|Item|Separator|CheckboxItem|RadioItem)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Popover(?:Trigger|Content)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Tooltip(?:Trigger|Content|Provider)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Avatar(?:Image|Fallback)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Separator\\.vue_vue_type_script_setup",
+          "(?:^|/)Input\\.vue_vue_type_script_setup",
+          "(?:^|/)Label\\.vue_vue_type_script_setup",
+          "(?:^|/)Checkbox\\.vue_vue_type_script_setup",
+          "(?:^|/)Switch\\.vue_vue_type_script_setup",
+          "(?:^|/)Skeleton\\.vue_vue_type_script_setup",
+          "(?:^|/)Sidebar(?:Provider|Trigger|Content|Header|Footer)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Collapsible(?:Trigger|Content)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Combobox(?:Trigger|Content|Item|Input)?\\.vue_vue_type_script_setup",
+          "(?:^|/)MultiSelect\\.vue_vue_type_script_setup",
+          "(?:^|/)RadioGroup(?:Item)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Table(?:Head|Header|Body|Row|Cell|Pagination)?\\.vue_vue_type_script_setup",
+          "(?:^|/)Textarea\\.vue_vue_type_script_setup"
+        ]
+      }
+    ]
+  }
+}

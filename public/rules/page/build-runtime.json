@@ -1,0 +1,97 @@
+{
+  "page": {
+    "buildRuntime": {
+      "defaults": {
+        "category": "构建与运行时"
+      },
+      "rules": [
+        {
+          "name": "Webpack",
+          "confidence": "中",
+          "patterns": [
+            "webpack",
+            "__webpack_require__",
+            "(?:^|/)wp-runtime-[^\\s\"'<>/]+\\.js(?:[?#]|[\"'<>\\s]|$)",
+            "(?:^|/)runtime-helpers-[^\\s\"'<>/]+\\.js(?:[?#]|[\"'<>\\s]|$)",
+            "(?:^|/)chunk-[^\\s\"'<>/]+-[a-f0-9]{8,}\\.js(?:[?#]|[\"'<>\\s]|$)"
+          ],
+          "globals": ["webpackChunk", "webpackJsonp"]
+        },
+        {
+          "name": "Vite",
+          "confidence": "高",
+          "patterns": ["/@vite/client", "vite\\.svg", "__vite", "vite/client"]
+        },
+        {
+          "defaults": {
+            "confidence": "中"
+          },
+          "rules": [
+            {
+              "name": "Parcel",
+              "patterns": ["parcel", "__parcel__"]
+            },
+            {
+              "name": "RequireJS / AMD",
+              "patterns": ["require(?:\\.min)?\\.js", "requirejs"],
+              "globals": ["requirejs"]
+            },
+            {
+              "name": "SystemJS",
+              "patterns": ["systemjs"],
+              "globals": ["System"]
+            }
+          ]
+        },
+        {
+          "name": "Babel Standalone",
+          "confidence": "高",
+          "globals": ["Babel"],
+          "selectors": ["script[type=\"text/babel\"]", "script[type=\"text/jsx\"]"]
+        },
+        {
+          "name": "ES Modules",
+          "confidence": "中",
+          "selectors": ["script[type=\"module\"]"]
+        },
+        {
+          "name": "PWA Manifest",
+          "confidence": "中",
+          "selectors": ["link[rel=\"manifest\"]"]
+        },
+        {
+          "name": "Open Graph",
+          "url": "https://ogp.me",
+          "confidence": "高",
+          "selectors": ["meta[property^=\"og:\"]"]
+        },
+        {
+          "name": "Priority Hints",
+          "url": "https://developer.mozilla.org/docs/Web/HTML/Attributes/fetchpriority",
+          "confidence": "高",
+          "selectors": ["[fetchpriority]"]
+        },
+        {
+          "category": "安全与协议",
+          "name": "WebSocket",
+          "confidence": "中",
+          "resourceOnly": true,
+          "resourceHints": ["ws://", "wss://"],
+          "patterns": ["^wss?://"]
+        },
+        {
+          "name": "WebAssembly",
+          "confidence": "高",
+          "resourceOnly": true,
+          "resourceHints": [".wasm"],
+          "patterns": ["\\.wasm(?:[?#]|[\"'<>\\s]|$)"]
+        },
+        {
+          "name": "Zone.js",
+          "confidence": "高",
+          "globals": ["Zone"]
+        }
+      ]
+    }
+  }
+}
