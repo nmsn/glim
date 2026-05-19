@@ -52,8 +52,10 @@ function getPageInfoFromDOM() {
 }
 
 function collectPageData() {
+  console.log('[Content] 开始 collectPageData');
   // 收集 scripts
   const scripts = [...document.scripts].map(s => s.src).filter(isInspectableUrl);
+  console.log('[Content] scripts:', scripts.length);
 
   // 收集 stylesheets
   const stylesheets = [...document.querySelectorAll("link[rel~='stylesheet'], link[as='style']")]
@@ -161,10 +163,13 @@ export default defineContentScript({
           sendResponse({ success: false, error: error.message });
         }
       } else if (message.type === 'GET_PAGE_DATA') {
+        console.log('[Content] 收到 GET_PAGE_DATA 消息');
         try {
           const data = collectPageData();
+          console.log('[Content] collectPageData 完成, scripts:', data.scripts.length, 'classes:', Object.keys(data.classes).length);
           sendResponse({ success: true, data });
         } catch (error: any) {
+          console.error('[Content] collectPageData 失败:', error);
           sendResponse({ success: false, error: error.message });
         }
       }
