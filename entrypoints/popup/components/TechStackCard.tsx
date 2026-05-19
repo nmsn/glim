@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, Package, Layers, Server, Code2, RefreshCw } from 'lucide-react';
 import type { TechnologyRecord, Confidence } from '@/utils/tech-stack/types';
 import { GlowCard } from './GlowCard';
@@ -19,27 +20,18 @@ const categoryIcons: Record<string, React.ReactNode> = {
   '后端 / 服务器框架': <Server className="w-3 h-3" />,
 };
 
-const categoryLabel: Record<string, string> = {
-  '前端框架': 'Frontend',
-  'UI / CSS 框架': 'UI Framework',
-  '前端库': 'Library',
-  '开发语言 / 运行时': 'Runtime',
-  '后端 / 服务器框架': 'Backend',
-  '网站程序': 'CMS',
-  'CDN / 托管': 'CDN',
-};
-
-const confidenceColor: Record<Confidence, string> = {
-  高: 'text-[var(--color-accent)]',
-  中: 'text-yellow-500',
-  低: 'text-[var(--color-muted)]',
+const confidenceStyle: Record<Confidence, string> = {
+  高: 'bg-[var(--color-accent)]/10 border-[var(--color-accent)]/30 text-[var(--color-accent)]',
+  中: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-500',
+  低: 'bg-[var(--color-muted)]/10 border-[var(--color-muted)]/30 text-[var(--color-muted)]',
 };
 
 interface TechItemProps {
   tech: TechnologyRecord;
+  getConfidenceLabel: (confidence: Confidence) => string;
 }
 
-function TechItem({ tech }: TechItemProps) {
+function TechItem({ tech, getConfidenceLabel }: TechItemProps) {
   const [expanded, setExpanded] = useState(false);
   const evidence = tech.evidence || [];
 
@@ -49,9 +41,6 @@ function TechItem({ tech }: TechItemProps) {
         onClick={() => evidence.length > 1 && setExpanded(!expanded)}
         className={`w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[var(--color-accent)]/5 transition-colors ${evidence.length <= 1 ? 'cursor-default' : 'cursor-pointer'}`}
       >
-        <span className={`font-mono text-[10px] ${confidenceColor[tech.confidence]}`}>
-          {tech.confidence}
-        </span>
         <span className="text-[11px] text-[var(--color-fg)] font-medium flex-1 truncate">
           {tech.name}
         </span>
@@ -60,6 +49,9 @@ function TechItem({ tech }: TechItemProps) {
             v{tech.version}
           </span>
         )}
+        <span className={`px-1 py-0.5 text-[9px] font-mono border ${confidenceStyle[tech.confidence]}`}>
+          {getConfidenceLabel(tech.confidence)}
+        </span>
         {evidence.length > 1 && (
           <span className="text-[var(--color-muted)]">
             {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
@@ -98,6 +90,7 @@ function groupByCategory(techs: TechnologyRecord[]): Record<string, TechnologyRe
 }
 
 export function TechStackCard({ technologies, loading, onRefresh }: TechStackCardProps) {
+  const { t } = useTranslation();
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set(['前端框架', 'UI / CSS 框架', '前端库', '开发语言 / 运行时', '后端 / 服务器框架']));
 
   const grouped = useMemo(() => groupByCategory(technologies), [technologies]);
@@ -111,15 +104,30 @@ export function TechStackCard({ technologies, loading, onRefresh }: TechStackCar
     });
   };
 
-  const displayTechs = useMemo(() => {
-    const cats = Object.keys(grouped);
-    if (cats.length === 0) return null;
-    const cat = cats.find(c => c === '前端框架') || cats[0];
-    return grouped[cat] || [];
-  }, [grouped]);
+  const getCategoryLabel = (cat: string) => {
+    const labels: Record<string, string> = {
+      '前端框架': t('techStack.categories.frontend'),
+      'UI / CSS 框架': t('techStack.categories.uiFramework'),
+      '前端库': t('techStack.categories.library'),
+      '开发语言 / 运行时': t('techStack.categories.runtime'),
+      '后端 / 服务器框架': t('techStack.categories.backend'),
+      '网站程序': t('techStack.categories.cms'),
+      'CDN / 托管': t('techStack.categories.cdn'),
+    };
+    return labels[cat] || cat;
+  };
+
+  const getConfidenceLabel = (confidence: Confidence) => {
+    const labels: Record<Confidence, string> = {
+      高: t('techStack.confidence.high'),
+      中: t('techStack.confidence.medium'),
+      低: t('techStack.confidence.low'),
+    };
+    return labels[confidence];
+  };
 
   return (
-    <GlowCard title="Tech Stack" loading={loading}>
+    <GlowCard title={t('techStack.title')} loading={loading}>
       <div className="space-y-[6px]">
         {/* Refresh button */}
         <div className="flex justify-end px-1">
@@ -134,16 +142,16 @@ export function TechStackCard({ technologies, loading, onRefresh }: TechStackCar
             `}
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
+            <span>{t('techStack.refresh')}</span>
           </button>
         </div>
         {loading && technologies.length === 0 ? (
           <div className="flex items-center justify-center py-4">
-            <span className="text-[10px] text-[var(--color-muted)] animate-pulse">Detecting...</span>
+            <span className="text-[10px] text-[var(--color-muted)] animate-pulse">{t('techStack.detecting')}</span>
           </div>
         ) : technologies.length === 0 ? (
           <div className="flex items-center justify-center py-4">
-            <span className="text-[10px] text-[var(--color-muted)]">No tech stack detected</span>
+            <span className="text-[10px] text-[var(--color-muted)]">{t('techStack.noData')}</span>
           </div>
         ) : (
           <>
@@ -162,7 +170,7 @@ export function TechStackCard({ technologies, loading, onRefresh }: TechStackCar
                   `}
                 >
                   {categoryIcons[cat]}
-                  <span>{categoryLabel[cat] || cat}</span>
+                  <span>{getCategoryLabel(cat)}</span>
                   <span className="opacity-60">({grouped[cat].length})</span>
                 </button>
               ))}
@@ -172,7 +180,7 @@ export function TechStackCard({ technologies, loading, onRefresh }: TechStackCar
               {Object.keys(grouped).filter(cat => expandedCats.has(cat)).map(cat => (
                 <div key={cat}>
                   {grouped[cat].map((tech, i) => (
-                    <TechItem key={`${cat}-${i}-${tech.name}`} tech={tech} />
+                    <TechItem key={`${cat}-${i}-${tech.name}`} tech={tech} getConfidenceLabel={getConfidenceLabel} />
                   ))}
                 </div>
               ))}

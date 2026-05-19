@@ -68,5 +68,25 @@
   "headers": {
     "title": "响应头信息",
     "noHeaders": "未找到响应头"
+  },
+  "techStack": {
+    "title": "技术栈",
+    "noData": "未检测到技术栈",
+    "detecting": "检测中...",
+    "refresh": "刷新",
+    "categories": {
+      "frontend": "前端框架",
+      "uiFramework": "UI 框架",
+      "library": "前端库",
+      "runtime": "运行时",
+      "backend": "后端框架",
+      "cms": "网站程序",
+      "cdn": "CDN"
+    },
+    "confidence": {
+      "high": "高置信",
+      "medium": "中置信",
+      "low": "低置信"
+    }
   }
 }

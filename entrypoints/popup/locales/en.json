@@ -68,5 +68,25 @@
   "headers": {
     "title": "Response Headers",
     "noHeaders": "No headers found"
+  },
+  "techStack": {
+    "title": "Tech Stack",
+    "noData": "No tech stack detected",
+    "detecting": "Detecting...",
+    "refresh": "Refresh",
+    "categories": {
+      "frontend": "Frontend",
+      "uiFramework": "UI Framework",
+      "library": "Library",
+      "runtime": "Runtime",
+      "backend": "Backend",
+      "cms": "CMS",
+      "cdn": "CDN"
+    },
+    "confidence": {
+      "high": "High Confidence",
+      "medium": "Medium Confidence",
+      "low": "Low Confidence"
+    }
   }
 }
