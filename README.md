@@ -16,12 +16,13 @@ Glim is a browser extension that provides comprehensive website analysis directl
 
 ### Core Features
 
-- **🔍 Basic Information**: Domain, protocol, page title, character encoding
+- **🔍 Basic Information**: Title, description, keywords, charset, favicon
 - **🌐 IP & Geolocation**: IP addresses with visual map display
 - **📡 Server Location**: Server location mapping with ISP information
 - **🔒 Security Headers**: Check HTTP security headers (HSTS, CSP, X-Frame, etc.)
 - **🏷️ Social Meta Tags**: Open Graph, Twitter Cards, canonical URLs
 - **📋 Response Headers**: Complete list of HTTP response headers
+- **⚡ Tech Stack Detection**: Identify frontend frameworks, UI libraries, CDN, build tools, and more
 - **⚡ Real-time Analysis**: Automatically fetches data when popup opens
 
 ### UI Design
@@ -35,6 +36,18 @@ Glim is a browser extension that provides comprehensive website analysis directl
   - Hover-triggered highlight effects
 - **Responsive Layout**: Optimized for popup interface
 
+### Tech Stack Detection
+
+Identifies technologies used by websites through:
+
+- **Frontend Frameworks**: React, Vue, Angular, Svelte, Next.js, Nuxt, etc.
+- **UI/CSS Frameworks**: Tailwind CSS, Bootstrap, Bulma, etc.
+- **JavaScript Libraries**: jQuery, Preact, Lit, Alpine.js, etc.
+- **Build Tools & Runtimes**: Webpack, Vite, Babel, Node.js
+- **CDN Providers**: Cloudflare, jsDelivr, unpkg, etc.
+- **Backend Hints**: Server software detection via HTTP headers
+- **Confidence Levels**: High/Medium/Low with visual indicators
+
 ## 🚀 Installation
 
 ### Development
@@ -47,8 +60,11 @@ cd glim
 # Install dependencies
 pnpm install
 
-# Start development server
+# Start development server (Chrome)
 pnpm dev
+
+# Start development server (Firefox)
+pnpm dev:firefox
 ```
 
 ### Build
@@ -64,13 +80,20 @@ pnpm build:firefox
 pnpm zip
 ```
 
+### Type Checking
+
+```bash
+pnpm compile
+```
+
 ## 🛠️ Tech Stack
 
 - **[WXT](https://wxt.dev/)** - Next-gen web extension framework
 - **React 19** - UI library with hooks
 - **TypeScript** - Type-safe development
-- **Tailwind CSS v4** - Utility-first styling
+- **Tailwind CSS v4** - Utility-first styling (via `@tailwindcss/vite`)
 - **react-simple-maps** - Interactive map visualization
+- **react-i18next** - Internationalization support (en, zh-CN)
 - **Browser APIs**:
   - `webRequest` - Capture response headers
   - `dns` - DNS resolution
@@ -81,19 +104,47 @@ pnpm zip
 
 ```
 entrypoints/
-├── popup/              # Popup UI
-│   ├── App.tsx        # Main component
-│   ├── style.css      # Global styles
-│   └── components/    # UI components
-├── background.ts      # Service worker
-├── content.ts        # Content script
-└── utils/            # Utility functions
-    ├── page-info.ts   # Page metadata extraction
-    ├── headers.ts     # Response headers
-    ├── dns.ts         # DNS resolution
-    ├── server-location.ts  # IP geolocation
+├── popup/              # Popup UI (React)
+│   ├── App.tsx         # Main component
+│   ├── style.css       # Global styles & CSS variables
+│   ├── components/     # UI components
+│   │   ├── GlowCard.tsx        # Card with glow border animation
+│   │   ├── KeyValueCard.tsx    # Key-value display card
+│   │   ├── ServerLocationCard.tsx  # IP + map visualization
+│   │   ├── PageInfoCard.tsx    # Basic page info
+│   │   ├── SecurityCard.tsx    # Security headers display
+│   │   ├── SocialTagsCard.tsx  # Social meta tags
+│   │   ├── HeadersCard.tsx     # Response headers
+│   │   ├── TechStackCard.tsx   # Tech stack detection
+│   │   └── MapChart.tsx       # Map component (lazy-loaded)
+│   └── locales/        # i18n translations (en, zh-CN)
+├── background.ts       # Service worker
+│                      # - HTTP header caching
+│                      # - IP geolocation lookup
+│                      # - Message passing
+├── content.ts         # Content script
+│                      # - Page data collection
+│                      # - Social meta tag extraction
+│                      # - Favicon detection
+└── utils/             # Utility functions
+    ├── tech-stack/     # Tech stack detection
+    │   ├── rule-loader.ts      # Rule file loading
+    │   ├── page-detector.ts    # Page-based detection
+    │   ├── header-detector.ts  # Header-based detection
+    │   ├── merge.ts            # Result merging
+    │   └── types.ts            # TypeScript types
+    ├── page-info.ts    # Page metadata extraction
+    ├── headers.ts      # Response headers retrieval
     ├── http-security.ts    # Security headers check
-    └── social-tag.ts       # Social meta tags
+    ├── social-tag.ts   # Social meta tags
+    ├── server-location.ts  # IP geolocation
+    └── get-ip.ts       # DNS resolution
+
+public/
+└── rules/              # Tech stack detection rules
+    ├── index.json      # Rule index
+    ├── page/           # Page-based detection rules
+    └── headers/        # Header-based detection rules
 ```
 
 ## 🎨 Design System
@@ -102,22 +153,31 @@ See [UI-DESIGN-SPEC.md](./UI-DESIGN-SPEC.md) for detailed design specifications.
 
 ### Color Palette
 
-- **Background**: `#0d0d0d` (Deep Black)
-- **Text**: `#e0e0e0` (Light Gray)
-- **Accent**: `#ffffff` (White) - Highlight and glow effects
-- **Border**: `#333333` (Dark Gray)
-- **Muted**: `#777777` (Gray)
+| Variable | Value | Usage |
+|----------|-------|-------|
+| `--color-bg` | `#0d0d0d` | Background |
+| `--color-fg` | `#e0e0e0` | Text |
+| `--color-accent` | `#ffffff` | Highlight, glow effects |
+| `--color-border` | `#333333` | Borders |
+| `--color-muted` | `#777777` | Secondary text |
+| `--color-hover` | `#1a1a1a` | Hover background |
 
 ### Typography
 
 - **Display**: Orbitron - Headers and titles
 - **Mono**: JetBrains Mono / Share Tech Mono - Data and values
 
+### Themes
+
+- **Dark** (default): High contrast dark theme
+- **Light**: Light theme variant (`.light-theme` class)
+- **System**: Follows `prefers-color-scheme`
+
 ## 🔒 Permissions
 
-- `dns` - DNS resolution
-- `webRequest` - Capture HTTP headers
-- `activeTab` - Access current tab
+- `dns` - DNS resolution for IP detection
+- `webRequest` - Capture HTTP headers for security analysis
+- `activeTab` - Access current tab information
 - `host_permissions: <all_urls>` - Analyze any website
 
 ## 📄 License
