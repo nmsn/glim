@@ -74,6 +74,8 @@ export const mergeRulePartial = (target: any, source: any) => {
 }
 
 const fetchRuleJson = async (relativePath: string): Promise<any> => {
+  console.log('[loadRules] 获取规则文件:', relativePath);
+  console.log('[loadRules] chrome.runtime.getURL:', chrome.runtime.getURL(relativePath));
   const response = await fetch(chrome.runtime.getURL(relativePath))
   if (!response.ok) throw new Error(`规则文件加载失败：${relativePath} ${response.status}`)
   return response.json()
@@ -86,12 +88,17 @@ const normalizeRulePath = (file: string) => {
 }
 
 export const loadRules = async (): Promise<RuleConfig> => {
+  console.log('[loadRules] 开始加载规则');
   const index = await fetchRuleJson(RULE_INDEX_PATH)
+  console.log('[loadRules] index.json 加载完成, files:', index.files);
   const files = Array.isArray(index.files) ? index.files : []
   const rules: RuleConfig = { schemaVersion: index.schemaVersion || 1 }
+  console.log('[loadRules] 开始加载', files.length, '个规则文件');
   const partials = await Promise.all(files.map((file: unknown) => fetchRuleJson(normalizeRulePath(String(file ?? '')))))
+  console.log('[loadRules] 所有规则文件加载完成, partials:', partials.length);
   for (const partial of partials) {
     mergeRulePartial(rules, partial)
   }
+  console.log('[loadRules] 最终规则 keys:', Object.keys(rules));
   return rules
 }
