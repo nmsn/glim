@@ -350,6 +350,10 @@ export function detectPageTechnologiesFromData(
   data: PageData,
   rules: RuleConfig
 ): TechnologyRecord[] {
+  console.log('[detectPageTechnologiesFromData] 开始检测, rules keys:', Object.keys(rules));
+  console.log('[detectPageTechnologiesFromData] data.scripts:', data.scripts.length, 'data.classes:', Object.keys(data.classes).length);
+  console.log('[detectPageTechnologiesFromData] data.globalKeys:', data.globalKeys.length);
+
   const technologies: TechnologyRecord[] = [];
 
   const add: (category: string, name: string, confidence: string, evidence?: string, extras?: { version?: string }) => void =
@@ -389,7 +393,10 @@ export function detectPageTechnologiesFromData(
   }
 
   // 检测前端框架
-  detectJsonRuleList(add, (rules as any).frontendFrameworks || [], {
+  const frontendRules = (rules as any).page?.frontendFrameworks;
+  console.log('[detectPageTechnologiesFromData] frontendRules 类型:', typeof frontendRules, Array.isArray(frontendRules) ? 'array, length:' + frontendRules.length : 'not array');
+  console.log('[detectPageTechnologiesFromData] frontendRules 前5个:', JSON.stringify(frontendRules?.slice(0, 5)));
+  detectJsonRuleList(add, frontendRules || [], {
     defaultCategory: '前端框架',
     resources,
     classes: data.classes,
@@ -459,6 +466,7 @@ export function detectPageTechnologiesFromData(
     sourceLabel: 'JSON 语言规则',
   });
 
+  console.log('[detectPageTechnologiesFromData] 检测完成, 发现技术:', technologies.length, technologies.map(t => t.name));
   return technologies;
 }
 
